@@ -21,16 +21,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
-
-const formSchema = z.object({
-  ageGroup: z.string(),
-  topic: z.string(),
-});
+import { submitGeneratorForm } from '@/app/stories/actions';
+import { storyFormSchema } from '../lib/storyFormSchema';
+import { Vollkorn } from 'next/font/google';
 
 export function GeneratorForm() {
   // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof storyFormSchema>>({
+    resolver: zodResolver(storyFormSchema),
     defaultValues: {
       ageGroup: '', // Set the default value to the first option
       topic: '',
@@ -38,8 +36,10 @@ export function GeneratorForm() {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof storyFormSchema>) {
+    console.log(`---------------- onSubmit `, { values });
+    const response = await submitGeneratorForm(values);
+    console.log(`---------------- response `, { response });
   }
 
   const currentAgeGroup = form.watch('ageGroup');
