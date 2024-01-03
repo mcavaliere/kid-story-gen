@@ -1,5 +1,6 @@
 'use client';
 
+import { useCompletion } from 'ai/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -23,9 +24,12 @@ import {
 } from './ui/select';
 import { submitGeneratorForm } from '@/app/stories/actions';
 import { storyFormSchema } from '../lib/storyFormSchema';
-import { Vollkorn } from 'next/font/google';
 
 export function GeneratorForm() {
+  const { completion, input, setInput, handleSubmit } = useCompletion({
+    api: '/api/stories/create',
+  });
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof storyFormSchema>>({
     resolver: zodResolver(storyFormSchema),
@@ -36,10 +40,12 @@ export function GeneratorForm() {
   });
 
   // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof storyFormSchema>) {
-    console.log(`---------------- onSubmit `, { values });
-    const response = await submitGeneratorForm(values);
-    console.log(`---------------- response `, { response });
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    // Tell useCompletion what the input is.
+    // TODO: put the form values here.
+    setInput('What time is it?');
+    // Submit to our api via useCompletion.
+    handleSubmit(e);
   }
 
   const currentAgeGroup = form.watch('ageGroup');
@@ -47,23 +53,50 @@ export function GeneratorForm() {
   const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="ageGroup"
-          render={({ field }) => {
-            return (
+    <>
+      <Form {...form}>
+        <form onSubmit={onSubmit} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="ageGroup"
+            render={({ field }) => {
+              return (
+                <FormItem>
+                  <FormControl>
+                    <Select onValueChange={field.onChange}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Age Group" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {AGE_GROUPS.map(({ name }) => (
+                          <SelectItem key={name} value={name}>
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
+          />
+
+          <FormField
+            control={form.control}
+            name="topic"
+            render={({ field }) => (
               <FormItem>
                 <FormControl>
                   <Select onValueChange={field.onChange}>
                     <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Age Group" />
+                      <SelectValue placeholder="Topic" />
                     </SelectTrigger>
                     <SelectContent>
-                      {AGE_GROUPS.map(({ name }) => (
-                        <SelectItem key={name} value={name}>
-                          {name}
+                      {themes?.map((theme) => (
+                        <SelectItem key={theme} value={theme}>
+                          {theme}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -72,37 +105,19 @@ export function GeneratorForm() {
 
                 <FormMessage />
               </FormItem>
-            );
-          }}
-        />
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="topic"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Select onValueChange={field.onChange}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Topic" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {themes?.map((theme) => (
-                      <SelectItem key={theme} value={theme}>
-                        {theme}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+          <Button type="submit">Submit</Button>
+        </form>
+      </Form>
+      {completion ? (
+        <div className="whitespace-pre-wrap my-4">{completion}</div>
+      ) : (
+        <div>
+          Enter a business description and click enter to generate slogans.
+        </div>
+      )}
+    </>
   );
 }
