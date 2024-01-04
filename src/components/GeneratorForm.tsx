@@ -24,6 +24,7 @@ import {
 } from './ui/select';
 
 import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
+import { Heading } from './Heading';
 
 export const headers = {
   'Content-Type': 'application/json',
@@ -61,15 +62,18 @@ export function GeneratorForm() {
   const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
 
   return (
-    <>
+    <div className="p-4 rounded-md bg-gray-100">
       <Form {...form}>
-        <form onSubmit={onSubmit} className="space-y-8">
+        <form onSubmit={onSubmit} className="flex-row">
+          <Heading size="h3" className="inline-block mr-2">
+            Give me a story for a{' '}
+          </Heading>
           <FormField
             control={form.control}
             name="ageGroup"
             render={({ field }) => {
               return (
-                <FormItem>
+                <FormItem className="inline-block">
                   <FormControl>
                     <Select onValueChange={field.onChange}>
                       <SelectTrigger className="w-[180px]">
@@ -91,11 +95,15 @@ export function GeneratorForm() {
             }}
           />
 
+          <Heading size="h3" className="inline-block mx-2">
+            about
+          </Heading>
+
           <FormField
             control={form.control}
             name="topic"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="inline-block">
                 <FormControl>
                   <Select onValueChange={field.onChange}>
                     <SelectTrigger className="w-[180px]">
@@ -116,12 +124,14 @@ export function GeneratorForm() {
             )}
           />
 
-          <Button type="submit">Submit</Button>
+          <Button type="submit" className="ml-2">
+            Submit
+          </Button>
         </form>
       </Form>
       {completion ? (
         <div className="whitespace-pre-wrap my-4">{completion}</div>
       ) : null}
-    </>
+    </div>
   );
 }
