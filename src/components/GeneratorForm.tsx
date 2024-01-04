@@ -13,7 +13,7 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+
 import { AGE_GROUPS } from '@/lib/constants';
 import {
   Select,
@@ -22,15 +22,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
-import { submitGeneratorForm } from '@/app/stories/actions';
-import { storyFormSchema } from '../lib/storyFormSchema';
+
+import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
+
+export const headers = {
+  'Content-Type': 'application/json',
+  Accept: 'application/json',
+};
+
+export async function generateStory(params: StoryFormSchemaType) {
+  return await fetch('/api/stories/create', {
+    method: 'POST',
+    body: JSON.stringify(params),
+    headers,
+  });
+}
 
 export function GeneratorForm() {
-  const { completion, input, setInput, handleSubmit } = useCompletion({
+  const { completion, isLoading, complete } = useCompletion({
     api: '/api/stories/create',
   });
 
-  // 1. Define your form.
   const form = useForm<z.infer<typeof storyFormSchema>>({
     resolver: zodResolver(storyFormSchema),
     defaultValues: {
@@ -39,13 +51,9 @@ export function GeneratorForm() {
     },
   });
 
-  // 2. Define a submit handler.
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    // Tell useCompletion what the input is.
-    // TODO: put the form values here.
-    setInput('What time is it?');
-    // Submit to our api via useCompletion.
-    handleSubmit(e);
+    e.preventDefault();
+    await complete(JSON.stringify(form.getValues()));
   }
 
   const currentAgeGroup = form.watch('ageGroup');
@@ -113,11 +121,7 @@ export function GeneratorForm() {
       </Form>
       {completion ? (
         <div className="whitespace-pre-wrap my-4">{completion}</div>
-      ) : (
-        <div>
-          Enter a business description and click enter to generate slogans.
-        </div>
-      )}
+      ) : null}
     </>
   );
 }
