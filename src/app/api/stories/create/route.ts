@@ -3,20 +3,14 @@ import fs from 'fs';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { replaceTemplateVars } from '@/lib/replaceTemplateVars';
 
-const SYSTEM_PROMPT = fs.readFileSync(
-  `${process.cwd()}/src/prompts/system.md`,
-  'utf8'
-);
-const CREATE_STORY_PROMPT = fs.readFileSync(
-  `${process.cwd()}/src/prompts/create-story.md`,
-  'utf8'
-);
+import { prompt as SYSTEM_PROMPT } from '@/prompts/system';
+import { prompt as CREATE_STORY_PROMPT } from '@/prompts/create-story';
 
 // Create an OpenAI API client (that's edge friendly!)
 const openai = new OpenAI();
 
 // Set the runtime to edge for best performance
-// export const runtime = 'edge';
+export const runtime = 'edge';
 
 export async function POST(req: Request) {
   const input = await req.json();
