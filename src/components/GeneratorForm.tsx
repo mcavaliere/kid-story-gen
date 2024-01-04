@@ -25,6 +25,7 @@ import {
 
 import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
 import { Heading } from './Heading';
+import Spinner from './svgs/Spinner';
 
 export const headers = {
   'Content-Type': 'application/json',
@@ -124,9 +125,13 @@ export function GeneratorForm() {
             )}
           />
 
-          <Button type="submit" className="ml-2">
+          <Button type="submit" className="inline-block ml-2">
             Submit
           </Button>
+
+          {isLoading ? (
+            <Spinner className="inline-block ml-2 text-black" />
+          ) : null}
         </form>
       </Form>
       {completion ? (
