@@ -40,9 +40,24 @@ export async function generateStory(params: StoryFormSchemaType) {
   });
 }
 
+function onResponse(res: Response): void {
+  console.log(`---------------- response: `, { res });
+}
+
+function onFinish(prompt: string, completion: string): void {
+  console.log(`---------------- onFinish: `, { prompt }, { completion });
+}
+
+function onError(err: Error): void {
+  console.log(`---------------- onError: `, { err });
+}
+
 export function GeneratorForm() {
   const { completion, isLoading, complete } = useCompletion({
     api: '/api/stories/create',
+    onResponse,
+    onFinish,
+    onError,
   });
 
   const form = useForm<z.infer<typeof storyFormSchema>>({
@@ -61,6 +76,8 @@ export function GeneratorForm() {
   const currentAgeGroup = form.watch('ageGroup');
 
   const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
+
+  console.log(completion);
 
   return (
     <div className="p-4 rounded-md bg-gray-100">
