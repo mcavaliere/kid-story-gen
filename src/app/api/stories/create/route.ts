@@ -5,12 +5,15 @@ import { replaceTemplateVars } from '@/lib/replaceTemplateVars';
 import { prompt as SYSTEM_PROMPT } from '@/prompts/system';
 import { prompt as CREATE_STORY_PROMPT } from '@/prompts/create-story';
 import { prisma } from '@/lib/server/prismaClientInstance';
+import { parse } from 'best-effort-json-parser';
 
 // Create an OpenAI API client (that's edge friendly!)
 const openai = new OpenAI();
 
 // Set the runtime to edge for best performance
-export const runtime = 'edge';
+// TODO: prisma doesn't work with the edge runtime, unless you use Accelerate. Re-examine when we
+//  are working on performance improvements.
+// export const runtime = 'edge';
 
 const divider = '----------------------------------------------------\n';
 
@@ -39,26 +42,24 @@ export async function POST(req: Request) {
         // TODO: This is where we'll kick off image generation.
         // console.log(`LONG ENOUGH`);
       }
-
-      // console.log(divider);
+    })
+    .on('finalContent', (snapshot: string) => {
+      const story = JSON.parse(snapshot);
+      // Save the story to the database.
+      prisma.story
+        .create({
+          data: story,
+        })
+        .catch((err) => {
+          console.warn(`---------------- story create error:  `, err);
+        });
     })
     .on('error', (err) => {
       console.log(`---------------- OpenAI ERROR:  `, err);
     });
 
   // Convert the response into a friendly text-stream
-  const stream = OpenAIStream(response, {
-    // onStart: () => console.log('Starting stream...', divider),
-    // onCompletion: (completion) =>
-    //   console.log('Completion: \n', divider, completion, divider),
-    // onFinal: (completion) => {
-    //   console.log(divider, 'Stream finalized.');
-    // },
-    // onToken: (token) => {
-    //   console.log('Received Token: ', token);
-    //   console.log(``);
-    // },
-  });
+  const stream = OpenAIStream(response);
 
   console.log(`---------------- api/stories/create END `);
 
