@@ -4,6 +4,7 @@ import { useCompletion } from 'ai/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import { parse } from 'best-effort-json-parser';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -26,6 +27,7 @@ import {
 import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
 import { Heading } from './Heading';
 import Spinner from './svgs/Spinner';
+import { StoryDisplay } from './StoryDisplay';
 
 export const headers = {
   'Content-Type': 'application/json',
@@ -151,9 +153,7 @@ export function GeneratorForm() {
           ) : null}
         </form>
       </Form>
-      {completion ? (
-        <div className="whitespace-pre-wrap my-4">{completion}</div>
-      ) : null}
+      {completion ? <StoryDisplay {...parse(completion)} /> : null}
     </div>
   );
 }
