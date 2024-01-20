@@ -28,6 +28,10 @@ import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
 import { Heading } from './Heading';
 import Spinner from './svgs/Spinner';
 import { StoryDisplay } from './StoryDisplay';
+import { useEffect, useState } from 'react';
+import { create } from 'domain';
+import { createImage } from '@/app/actions';
+import { GenerationResponse } from '@/lib/server/stabilityai';
 
 export const headers = {
   'Content-Type': 'application/json',
@@ -70,21 +74,27 @@ export function GeneratorForm() {
     },
   });
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    await complete(JSON.stringify(form.getValues()));
+  const [imageGenResponse, setImageGenResponse] = useState<GenerationResponse | undefined>(undefined);
+  const imageData = imageGenResponse?.artifacts[0].base64;
+  const imagePath = !imageData ? undefined : `data:image/png;base64,${imageData}`;
+
+  async function onSubmit(values: StoryFormSchemaType) {
+    console.log(`---------------- onSubmit `);
+    const image = await createImage("The Wizard's Magical Chicken Cloak")
+    console.log(`---------------- image: `, {image});
+    setImageGenResponse(image)
+    // await complete(JSON.stringify(form.getValues()));
   }
 
   const currentAgeGroup = form.watch('ageGroup');
-
   const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
-
-  console.log(completion);
+  const completionJson = completion ? parse(completion) : {};
+  console.log({completionJson});
 
   return (
     <div className="p-4 rounded-md bg-gray-100">
       <Form {...form}>
-        <form onSubmit={onSubmit} className="flex-row">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex-row">
           <Heading size="h3" className="inline-block mr-2">
             Give me a story for a{' '}
           </Heading>
@@ -108,8 +118,6 @@ export function GeneratorForm() {
                       </SelectContent>
                     </Select>
                   </FormControl>
-
-                  <FormMessage />
                 </FormItem>
               );
             }}
@@ -139,7 +147,7 @@ export function GeneratorForm() {
                   </Select>
                 </FormControl>
 
-                <FormMessage />
+
               </FormItem>
             )}
           />
@@ -153,6 +161,13 @@ export function GeneratorForm() {
           ) : null}
         </form>
       </Form>
+
+      {!imagePath ? null : (
+        <div className="flex justify-center">
+          <img src={imagePath} />
+        </div>
+      )}
+
       {completion ? <StoryDisplay {...parse(completion)} /> : null}
     </div>
   );

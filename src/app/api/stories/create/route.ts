@@ -6,6 +6,7 @@ import { prompt as SYSTEM_PROMPT } from '@/prompts/system';
 import { prompt as CREATE_STORY_PROMPT } from '@/prompts/create-story';
 import { prisma } from '@/lib/server/prismaClientInstance';
 import { parse } from 'best-effort-json-parser';
+import { generation, GenerationResponse } from '@/lib/server/stabilityai';
 
 // Create an OpenAI API client (that's edge friendly!)
 const openai = new OpenAI();
