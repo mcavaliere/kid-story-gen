@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { parse } from 'best-effort-json-parser';
+import Image from 'next/image'
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,7 +13,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
 } from '@/components/ui/form';
 
 import { AGE_GROUPS } from '@/lib/constants';
@@ -91,15 +91,14 @@ export function GeneratorForm() {
       topic: '',
     },
   });
+  const currentAgeGroup = form.watch('ageGroup');
+  const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
 
-
-
+  // For image generation
   const [imageGenResponse, setImageGenResponse] = useState<GenerationResponse | undefined>(undefined);
+  const [imageIsGenerating, setImageIsGenerating] = useState<boolean>(false);
   const imageData = imageGenResponse?.artifacts[0].base64;
   const imagePath = !imageData ? undefined : `data:image/png;base64,${imageData}`;
-  const [imageIsGenerating, setImageIsGenerating] = useState<boolean>(false);
-
-
 
   async function onSubmit(values: StoryFormSchemaType) {
     // Reset this so we can generate a new image.
@@ -107,10 +106,10 @@ export function GeneratorForm() {
     await complete(JSON.stringify(form.getValues()));
   }
 
-  const currentAgeGroup = form.watch('ageGroup');
-  const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
+  // JSONified streaming chat response.
   const completionJson = parseCompletion(completion);
 
+  // Generate an image for the story title one time, once the title exists.
   useEffect(() => {
     if (completionJson?.title && !imageGenResponse && !imageIsGenerating) {
       setImageIsGenerating(true);
@@ -122,8 +121,6 @@ export function GeneratorForm() {
       })
     }
   }, [completionJson?.title, imageGenResponse, imageIsGenerating])
-
-
 
   return (
     <div className="p-4 rounded-md bg-gray-100">
