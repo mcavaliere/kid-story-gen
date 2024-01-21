@@ -102,10 +102,8 @@ export function GeneratorForm() {
 
 
   async function onSubmit(values: StoryFormSchemaType) {
-    // console.log(`---------------- onSubmit `);
-    // const image = await createImage("The Wizard's Magical Chicken Cloak")
-    // console.log(`---------------- image: `, {image});
-    // setImageGenResponse(image)
+    // Reset this so we can generate a new image.
+    setImageGenResponse(undefined);
     await complete(JSON.stringify(form.getValues()));
   }
 
