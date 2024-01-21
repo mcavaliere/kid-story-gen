@@ -58,6 +58,24 @@ function onError(err: Error): void {
   console.log(`---------------- onError: `, { err });
 }
 
+export type StoryCompletionJson = {
+  title: string;
+  content: string;
+};
+
+
+
+export function parseCompletion(completion: string | undefined, defaultValue: StoryCompletionJson = {title: "", content: ""}): StoryCompletionJson {
+  if (!completion) return defaultValue
+
+  try {
+    return parse(completion);
+  } catch (e) {
+    console.log(`can't parse `, e, {completion});
+    return defaultValue
+  }
+}
+
 export function GeneratorForm() {
   const { completion, isLoading, complete } = useCompletion({
     api: '/api/stories/create',
@@ -74,22 +92,40 @@ export function GeneratorForm() {
     },
   });
 
+
+
   const [imageGenResponse, setImageGenResponse] = useState<GenerationResponse | undefined>(undefined);
   const imageData = imageGenResponse?.artifacts[0].base64;
   const imagePath = !imageData ? undefined : `data:image/png;base64,${imageData}`;
+  const [imageIsGenerating, setImageIsGenerating] = useState<boolean>(false);
+
+
 
   async function onSubmit(values: StoryFormSchemaType) {
-    console.log(`---------------- onSubmit `);
-    const image = await createImage("The Wizard's Magical Chicken Cloak")
-    console.log(`---------------- image: `, {image});
-    setImageGenResponse(image)
-    // await complete(JSON.stringify(form.getValues()));
+    // console.log(`---------------- onSubmit `);
+    // const image = await createImage("The Wizard's Magical Chicken Cloak")
+    // console.log(`---------------- image: `, {image});
+    // setImageGenResponse(image)
+    await complete(JSON.stringify(form.getValues()));
   }
 
   const currentAgeGroup = form.watch('ageGroup');
   const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
-  const completionJson = completion ? parse(completion) : {};
-  console.log({completionJson});
+  const completionJson = parseCompletion(completion);
+
+  useEffect(() => {
+    if (completionJson?.title && !imageGenResponse && !imageIsGenerating) {
+      setImageIsGenerating(true);
+      console.log({imageIsGenerating}, {imageGenResponse}, {title: completionJson?.title});
+      createImage(completionJson?.title).then((image) => {
+        setImageGenResponse(image);
+        setImageIsGenerating(false);
+        console.log({imageIsGenerating}, {imageGenResponse}, {title: completionJson?.title});
+      })
+    }
+  }, [completionJson?.title, imageGenResponse, imageIsGenerating])
+
+
 
   return (
     <div className="p-4 rounded-md bg-gray-100">
@@ -168,7 +204,7 @@ export function GeneratorForm() {
         </div>
       )}
 
-      {completion ? <StoryDisplay {...parse(completion)} /> : null}
+      {completion ? <StoryDisplay {...parseCompletion(completion)} /> : null}
     </div>
   );
 }
