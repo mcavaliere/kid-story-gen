@@ -63,8 +63,6 @@ export type StoryCompletionJson = {
   content: string;
 };
 
-
-
 export function parseCompletion(completion: string | undefined, defaultValue: StoryCompletionJson = {title: "", content: ""}): StoryCompletionJson {
   if (!completion) return defaultValue
 
@@ -113,11 +111,9 @@ export function GeneratorForm() {
   useEffect(() => {
     if (completionJson?.title && !imageGenResponse && !imageIsGenerating) {
       setImageIsGenerating(true);
-      console.log({imageIsGenerating}, {imageGenResponse}, {title: completionJson?.title});
       createImage(completionJson?.title).then((image) => {
         setImageGenResponse(image);
         setImageIsGenerating(false);
-        console.log({imageIsGenerating}, {imageGenResponse}, {title: completionJson?.title});
       })
     }
   }, [completionJson?.title, imageGenResponse, imageIsGenerating])
