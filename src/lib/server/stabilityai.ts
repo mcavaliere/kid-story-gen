@@ -11,7 +11,7 @@ const headers = {
   Accept: 'application/json',
 };
 
-export interface GenerationResponse {
+export interface ImageGenerationResponse {
   artifacts: Array<{
     base64: string;
     seed: number;
@@ -19,7 +19,7 @@ export interface GenerationResponse {
   }>;
 }
 
-export async function generation(prompt: string): Promise<GenerationResponse> {
+export async function generation(prompt: string): Promise<ImageGenerationResponse> {
   const engineId = 'stable-diffusion-v1-6';
   const url = `${BASE_URL}/v1/generation/${engineId}/text-to-image`;
 

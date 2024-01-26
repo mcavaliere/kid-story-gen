@@ -29,9 +29,8 @@ import { Heading } from './Heading';
 import Spinner from './svgs/Spinner';
 import { StoryDisplay } from './StoryDisplay';
 import { useEffect, useState } from 'react';
-import { create } from 'domain';
 import { createImage } from '@/app/actions';
-import { GenerationResponse } from '@/lib/server/stabilityai';
+import { ImageGenerationResponse } from '@/app/actions';
 
 export const headers = {
   'Content-Type': 'application/json',
@@ -46,17 +45,6 @@ export async function generateStory(params: StoryFormSchemaType) {
   });
 }
 
-function onResponse(res: Response): void {
-  console.log(`---------------- response: `, { res });
-}
-
-function onFinish(prompt: string, completion: string): void {
-  console.log(`---------------- onFinish: `, { prompt }, { completion });
-}
-
-function onError(err: Error): void {
-  console.log(`---------------- onError: `, { err });
-}
 
 export type StoryCompletionJson = {
   title: string;
@@ -68,8 +56,8 @@ export function parseCompletion(completion: string | undefined, defaultValue: St
 
   try {
     return parse(completion);
-  } catch (e) {
-    console.log(`can't parse `, e, {completion});
+  } catch (error) {
+    console.log(`can't parse `, {error}, {completion});
     return defaultValue
   }
 }
@@ -77,9 +65,6 @@ export function parseCompletion(completion: string | undefined, defaultValue: St
 export function GeneratorForm() {
   const { completion, isLoading, complete } = useCompletion({
     api: '/api/stories/create',
-    onResponse,
-    onFinish,
-    onError,
   });
 
   const form = useForm<z.infer<typeof storyFormSchema>>({
@@ -93,10 +78,9 @@ export function GeneratorForm() {
   const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
 
   // For image generation
-  const [imageGenResponse, setImageGenResponse] = useState<GenerationResponse | undefined>(undefined);
+  const [imageGenResponse, setImageGenResponse] = useState<ImageGenerationResponse | undefined>(undefined);
   const [imageIsGenerating, setImageIsGenerating] = useState<boolean>(false);
-  const imageData = imageGenResponse?.artifacts[0].base64;
-  const imagePath = !imageData ? undefined : `data:image/png;base64,${imageData}`;
+
 
   async function onSubmit(values: StoryFormSchemaType) {
     // Reset this so we can generate a new image.
@@ -112,11 +96,15 @@ export function GeneratorForm() {
     if (completionJson?.title && !imageGenResponse && !imageIsGenerating) {
       setImageIsGenerating(true);
       createImage(completionJson?.title).then((image) => {
+        console.log(`image response:  `, {image});
         setImageGenResponse(image);
         setImageIsGenerating(false);
       })
     }
   }, [completionJson?.title, imageGenResponse, imageIsGenerating])
+
+  // const imagePath = imageGenResponse?.url;
+  const imagePath = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-Ai6FnzlH3437nQyQTuNvsFot/user-bg6ZdeJvNKqLmlYdr5Mn39VJ/img-CU3JL6V6IoX85jGTOln1deGA.png?st=2024-01-26T16%3A17%3A30Z&se=2024-01-26T18%3A17%3A30Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-01-25T21%3A26%3A57Z&ske=2024-01-26T21%3A26%3A57Z&sks=b&skv=2021-08-06&sig=NfkchL8Lnb9%2B/Bxe3ax/gd44vxAevKZYEY7ArLIC2cc%3D&w=640&q=75"
 
   return (
     <div className="p-4 rounded-md bg-gray-100">
@@ -173,8 +161,6 @@ export function GeneratorForm() {
                     </SelectContent>
                   </Select>
                 </FormControl>
-
-
               </FormItem>
             )}
           />
@@ -190,8 +176,8 @@ export function GeneratorForm() {
       </Form>
 
       {!imagePath ? null : (
-        <div className="flex justify-center">
-          <img src={imagePath} />
+        <div className="flex justify-center w-full h-auto min-h-[200px] relative">
+          <Image src={imagePath} alt={`Cover image for story`} width="512" height="512" style={{width: '100%'}}  />
         </div>
       )}
 
