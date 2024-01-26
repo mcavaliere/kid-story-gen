@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { parse } from 'best-effort-json-parser';
 import Image from 'next/image';
+import { motion } from "framer-motion"
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
@@ -27,6 +28,8 @@ import { useEffect, useState } from 'react';
 import { createImage } from '@/app/actions';
 import { ImageGenerationResponse } from '@/app/actions';
 import { StoryCompletionJson } from '@/types';
+import { Skeleton } from './ui/skeleton';
+import { Loader } from '@/components/ui/loader';
 
 export const headers = {
   'Content-Type': 'application/json',
@@ -182,18 +185,30 @@ export function GeneratorForm() {
           ) : null}
         </form>
       </Form>
+      {imageIsGenerating || imagePath ? (
+        <div className="flex justify-center items-center w-full h-auto min-h-[200px] relative">
+          {imageIsGenerating ? (
+            <motion.div
+              className="flex justify-center items-center space-x-4 mx-auto w-full"
+              initial={{ x: -100, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -100, opacity: 0 }}
+            >
+              <Skeleton className="h-12 w-12 rounded-full" />
+            </motion.div>
+          ) : null}
+          {imagePath ? (
+            <Image
+              src={imagePath}
+              alt={`Cover image for story`}
+              width="512"
+              height="512"
+              style={{ width: '100%' }}
+            />
+          ) : null}
 
-      {!imagePath ? null : (
-        <div className="flex justify-center w-full h-auto min-h-[200px] relative">
-          <Image
-            src={imagePath}
-            alt={`Cover image for story`}
-            width="512"
-            height="512"
-            style={{ width: '100%' }}
-          />
         </div>
-      )}
+      ): null}
 
       {completion ? <StoryDisplay {...parseCompletion(completion)} /> : null}
     </div>
