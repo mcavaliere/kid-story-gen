@@ -22,5 +22,7 @@
     "titleBar.inactiveForeground": "#e7e7e799"
   },
   "peacock.color": "#2ba1b4",
-  "prettier.configPath": "prettier.config.mjs"
+  "prettier.configPath": "prettier.config.mjs",
+  "sortJSON.excludedPaths": [],
+  "prettier.documentSelectors": ["*.ts,*.tsx"]
 }

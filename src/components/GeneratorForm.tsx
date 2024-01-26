@@ -5,15 +5,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { parse } from 'best-effort-json-parser';
-import Image from 'next/image'
+import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 
 import { AGE_GROUPS } from '@/lib/constants';
 import {
@@ -31,6 +26,7 @@ import { StoryDisplay } from './StoryDisplay';
 import { useEffect, useState } from 'react';
 import { createImage } from '@/app/actions';
 import { ImageGenerationResponse } from '@/app/actions';
+import { StoryCompletionJson } from '@/types';
 
 export const headers = {
   'Content-Type': 'application/json',
@@ -46,19 +42,21 @@ export async function generateStory(params: StoryFormSchemaType) {
 }
 
 
-export type StoryCompletionJson = {
-  title: string;
-  content: string;
-};
 
-export function parseCompletion(completion: string | undefined, defaultValue: StoryCompletionJson = {title: "", content: ""}): StoryCompletionJson {
-  if (!completion) return defaultValue
+export function parseCompletion(
+  completion: string | undefined,
+  defaultValue: StoryCompletionJson = {
+    title: '',
+    content: '',
+  }
+): StoryCompletionJson {
+  if (!completion) return defaultValue;
 
   try {
     return parse(completion);
   } catch (error) {
-    console.log(`can't parse `, {error}, {completion});
-    return defaultValue
+    console.log(`can't parse `, { error }, { completion });
+    return defaultValue;
   }
 }
 
@@ -78,9 +76,10 @@ export function GeneratorForm() {
   const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
 
   // For image generation
-  const [imageGenResponse, setImageGenResponse] = useState<ImageGenerationResponse | undefined>(undefined);
+  const [imageGenResponse, setImageGenResponse] = useState<
+    ImageGenerationResponse | undefined
+  >(undefined);
   const [imageIsGenerating, setImageIsGenerating] = useState<boolean>(false);
-
 
   async function onSubmit(values: StoryFormSchemaType) {
     // Reset this so we can generate a new image.
@@ -93,18 +92,27 @@ export function GeneratorForm() {
 
   // Generate an image for the story title one time, once the title exists.
   useEffect(() => {
-    if (completionJson?.title && !imageGenResponse && !imageIsGenerating) {
+    // console.log({completionJson});
+    if (
+      completionJson?.title &&
+      completionJson?.synopsis &&
+      completionJson?.characters &&
+      completionJson?.characterDescriptions &&
+      !imageGenResponse &&
+      !imageIsGenerating
+    ) {
       setImageIsGenerating(true);
-      createImage(completionJson?.title).then((image) => {
-        console.log(`image response:  `, {image});
+      createImage(completionJson).then((image) => {
+        // console.log(`image response:  `, { image });
         setImageGenResponse(image);
         setImageIsGenerating(false);
-      })
+      });
     }
-  }, [completionJson?.title, imageGenResponse, imageIsGenerating])
+  }, [completionJson, imageGenResponse, imageIsGenerating]);
 
-  // const imagePath = imageGenResponse?.url;
-  const imagePath = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-Ai6FnzlH3437nQyQTuNvsFot/user-bg6ZdeJvNKqLmlYdr5Mn39VJ/img-CU3JL6V6IoX85jGTOln1deGA.png?st=2024-01-26T16%3A17%3A30Z&se=2024-01-26T18%3A17%3A30Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-01-25T21%3A26%3A57Z&ske=2024-01-26T21%3A26%3A57Z&sks=b&skv=2021-08-06&sig=NfkchL8Lnb9%2B/Bxe3ax/gd44vxAevKZYEY7ArLIC2cc%3D&w=640&q=75"
+  const imagePath = imageGenResponse?.url;
+  // Static image for testing.
+  // const imagePath = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-Ai6FnzlH3437nQyQTuNvsFot/user-bg6ZdeJvNKqLmlYdr5Mn39VJ/img-CU3JL6V6IoX85jGTOln1deGA.png?st=2024-01-26T16%3A17%3A30Z&se=2024-01-26T18%3A17%3A30Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-01-25T21%3A26%3A57Z&ske=2024-01-26T21%3A26%3A57Z&sks=b&skv=2021-08-06&sig=NfkchL8Lnb9%2B/Bxe3ax/gd44vxAevKZYEY7ArLIC2cc%3D&w=640&q=75"
 
   return (
     <div className="p-4 rounded-md bg-gray-100">
@@ -177,7 +185,13 @@ export function GeneratorForm() {
 
       {!imagePath ? null : (
         <div className="flex justify-center w-full h-auto min-h-[200px] relative">
-          <Image src={imagePath} alt={`Cover image for story`} width="512" height="512" style={{width: '100%'}}  />
+          <Image
+            src={imagePath}
+            alt={`Cover image for story`}
+            width="512"
+            height="512"
+            style={{ width: '100%' }}
+          />
         </div>
       )}
 
