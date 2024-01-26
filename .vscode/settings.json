@@ -1,6 +1,4 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "workbench.colorCustomizations": {
     "activityBar.activeBackground": "#40bdd1",
@@ -24,5 +22,10 @@
   "peacock.color": "#2ba1b4",
   "prettier.configPath": "prettier.config.mjs",
   "sortJSON.excludedPaths": [],
-  "prettier.documentSelectors": ["*.ts,*.tsx"]
+  "prettier.documentSelectors": ["**/*.ts", "**/*.tsx"],
+  "bookmarks.useWorkaroundForFormatters": true,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  }
 }
