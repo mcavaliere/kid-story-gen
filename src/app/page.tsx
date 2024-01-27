@@ -1,6 +1,7 @@
 import { Heading } from '@/components/Heading';
 import { Separator } from '@/components/ui/separator';
-import { GeneratorFormContext } from '../components/GeneratorFormContext';
+import { StoryContextProvider } from '@/context/StoryContext';
+import { StoryFormContainer } from '../components/StoryFormContainer';
 
 export default function Home() {
   return (
@@ -22,7 +23,9 @@ export default function Home() {
 
         <Separator className="my-10" />
 
-        <GeneratorFormContext />
+        <StoryContextProvider>
+          <StoryFormContainer />
+        </StoryContextProvider>
       </div>
     </main>
   );

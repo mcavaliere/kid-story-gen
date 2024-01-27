@@ -1,10 +1,10 @@
-import OpenAI from 'openai';
-import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { replaceTemplateVars } from '@/lib/replaceTemplateVars';
+import { OpenAIStream, StreamingTextResponse } from 'ai';
+import OpenAI from 'openai';
 
-import { prompt as SYSTEM_PROMPT } from '@/prompts/system';
-import { prompt as CREATE_STORY_PROMPT } from '@/prompts/create-story';
 import { prisma } from '@/lib/server/prismaClientInstance';
+import { prompt as CREATE_STORY_PROMPT } from '@/prompts/create-story';
+import { prompt as SYSTEM_PROMPT } from '@/prompts/system';
 import { parse } from 'best-effort-json-parser';
 
 // Create an OpenAI API client (that's edge friendly!)
@@ -31,6 +31,7 @@ export async function POST(req: Request) {
       ],
       model: 'gpt-3.5-turbo',
       stream: true,
+      temperature: 0.3,
     })
     .on('finalContent', (snapshot: string) => {
       const story = parse(snapshot);
