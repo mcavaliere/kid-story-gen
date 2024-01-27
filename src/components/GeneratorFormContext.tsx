@@ -1,12 +1,11 @@
 'use client';
 
-import { useCompletion } from 'ai/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useCompletion } from 'ai/react';
+
+import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { parse } from 'best-effort-json-parser';
-import Image from 'next/image';
-import { motion } from "framer-motion"
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
@@ -20,50 +19,16 @@ import {
   SelectValue,
 } from './ui/select';
 
+import { ImageGenerationResponse, createImage } from '@/app/actions';
+import { useEffect, useState } from 'react';
+import { parseCompletion } from '../lib/parseCompletion';
 import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
 import { Heading } from './Heading';
-import Spinner from './svgs/Spinner';
 import { StoryDisplay } from './StoryDisplay';
-import { useEffect, useState } from 'react';
-import { createImage } from '@/app/actions';
-import { ImageGenerationResponse } from '@/app/actions';
-import { StoryCompletionJson } from '@/types';
-import { Skeleton } from './ui/skeleton';
-import { Loader } from '@/components/ui/loader';
+import { StoryImageLoader } from './StoryImageLoader';
+import Spinner from './svgs/Spinner';
 
-export const headers = {
-  'Content-Type': 'application/json',
-  Accept: 'application/json',
-};
-
-export async function generateStory(params: StoryFormSchemaType) {
-  return await fetch('/api/stories/create', {
-    method: 'POST',
-    body: JSON.stringify(params),
-    headers,
-  });
-}
-
-
-
-export function parseCompletion(
-  completion: string | undefined,
-  defaultValue: StoryCompletionJson = {
-    title: '',
-    content: '',
-  }
-): StoryCompletionJson {
-  if (!completion) return defaultValue;
-
-  try {
-    return parse(completion);
-  } catch (error) {
-    console.log(`can't parse `, { error }, { completion });
-    return defaultValue;
-  }
-}
-
-export function GeneratorForm() {
+export function GeneratorFormContext() {
   const { completion, isLoading, complete } = useCompletion({
     api: '/api/stories/create',
   });
@@ -124,6 +89,7 @@ export function GeneratorForm() {
           <Heading size="h3" className="inline-block mr-2">
             Give me a story for a{' '}
           </Heading>
+
           <FormField
             control={form.control}
             name="ageGroup"
@@ -185,32 +151,31 @@ export function GeneratorForm() {
           ) : null}
         </form>
       </Form>
-      {imageIsGenerating || imagePath ? (
-        <div className="flex justify-center items-center w-full h-auto min-h-[200px] relative">
-          {imageIsGenerating ? (
-            <motion.div
-              className="flex justify-center items-center space-x-4 mx-auto w-full"
-              initial={{ x: -100, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -100, opacity: 0 }}
-            >
-              <Skeleton className="h-12 w-12 rounded-full" />
-            </motion.div>
-          ) : null}
-          {imagePath ? (
-            <Image
-              src={imagePath}
-              alt={`Cover image for story`}
-              width="512"
-              height="512"
-              style={{ width: '100%' }}
-            />
-          ) : null}
 
+      <div className="mt-4 flex flex-col md:flex-row bg--100 w-full">
+        <div className="w-full md:w-1/2">
+          {imageIsGenerating || imagePath ? (
+            <div className="flex justify-center items-center w-full h-auto min-h-[200px] relative">
+              {imageIsGenerating ? <StoryImageLoader /> : null}
+
+              {imagePath ? (
+                <Image
+                  src={imagePath}
+                  alt={`Cover image for story`}
+                  width="512"
+                  height="512"
+                  style={{ width: '100%' }}
+                />
+              ) : null}
+            </div>
+          ) : null}
         </div>
-      ): null}
-
-      {completion ? <StoryDisplay {...parseCompletion(completion)} /> : null}
+        <div className="w-full md:w-1/2 md:pl-4">
+          {completion ? (
+            <StoryDisplay {...parseCompletion(completion)} />
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 }

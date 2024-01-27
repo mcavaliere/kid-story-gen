@@ -1,7 +1,6 @@
-import React from 'react';
-import { Separator } from '@/components/ui/separator';
-import { GeneratorForm } from '../components/GeneratorForm';
 import { Heading } from '@/components/Heading';
+import { Separator } from '@/components/ui/separator';
+import { GeneratorFormContext } from '../components/GeneratorFormContext';
 
 export default function Home() {
   return (
@@ -23,7 +22,7 @@ export default function Home() {
 
         <Separator className="my-10" />
 
-        <GeneratorForm />
+        <GeneratorFormContext />
       </div>
     </main>
   );
