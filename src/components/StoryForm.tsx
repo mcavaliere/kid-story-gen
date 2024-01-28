@@ -31,7 +31,7 @@ export function StoryForm({ form }: GenratorFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-row items-center"
+        className="flex flex-col lg:flex-row items-center"
       >
         <Heading size="h3" className="inline-block mr-2">
           Give me a story for{' '}
