@@ -1,9 +1,10 @@
 'use client';
+
 import * as z from 'zod';
 
 export const storyFormSchema = z.object({
-  ageGroup: z.string().min(1),
-  topic: z.string().min(1),
+  ageGroup: z.string().min(1, { message: 'required' }),
+  topic: z.string().min(1, { message: 'required' }),
 });
 
 export type StoryFormSchemaType = z.infer<typeof storyFormSchema>;

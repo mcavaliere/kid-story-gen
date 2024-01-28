@@ -1,5 +1,11 @@
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form';
 import { useStoryContext } from '@/context/StoryContext';
 import { AGE_GROUPS } from '@/lib/constants';
 import { StoryFormSchemaType } from '@/lib/storyFormSchema';
@@ -23,7 +29,10 @@ export function StoryForm({ form }: GenratorFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-row">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-row items-start"
+      >
         <Heading size="h3" className="inline-block mr-2">
           Give me a story for a{' '}
         </Heading>
@@ -48,6 +57,7 @@ export function StoryForm({ form }: GenratorFormProps) {
                     </SelectContent>
                   </Select>
                 </FormControl>
+                <FormMessage className="pl-3" />
               </FormItem>
             );
           }}
@@ -76,6 +86,7 @@ export function StoryForm({ form }: GenratorFormProps) {
                   </SelectContent>
                 </Select>
               </FormControl>
+              <FormMessage className="pl-3" />
             </FormItem>
           )}
         />
