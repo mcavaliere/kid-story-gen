@@ -39,15 +39,18 @@ export function StoryContextProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const [storyGenerationComplete, setStoryGenerationComplete] =
+    useState<boolean>(false);
+  const [storySaved, setStorySaved] = useState<boolean>(false);
+
   const {
     completion,
     isLoading: storyContentIsLoading,
     complete,
   } = useCompletion({
     api: '/api/stories/generate',
-    onFinish: async (prompt: string, completion: string) => {
-      const json = parseCompletion(completion);
-      await mutateCreateStory(json);
+    onFinish: async () => {
+      setStoryGenerationComplete(true);
     },
   });
 
@@ -120,6 +123,32 @@ export function StoryContextProvider({
   const imagePath = imageGenResponse?.url;
   // Static image for testing.
   // const imagePath = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-Ai6FnzlH3437nQyQTuNvsFot/user-bg6ZdeJvNKqLmlYdr5Mn39VJ/img-CU3JL6V6IoX85jGTOln1deGA.png?st=2024-01-26T16%3A17%3A30Z&se=2024-01-26T18%3A17%3A30Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-01-25T21%3A26%3A57Z&ske=2024-01-26T21%3A26%3A57Z&sks=b&skv=2021-08-06&sig=NfkchL8Lnb9%2B/Bxe3ax/gd44vxAevKZYEY7ArLIC2cc%3D&w=640&q=75"
+
+  useEffect(() => {
+    if (
+      storyGenerationComplete &&
+      !storyContentIsLoading &&
+      imageGenResponse &&
+      !imageIsGenerating &&
+      !isCreatingStory &&
+      !storySaved
+    ) {
+      console.log(`story generation complete, saving story`);
+      mutateCreateStory({
+        ...completionJson,
+        imageUrl: imageGenResponse.url,
+      }).then((response) => {
+        setStorySaved(true);
+      });
+    }
+  }, [
+    storyGenerationComplete,
+    storyContentIsLoading,
+    imageGenResponse,
+    imageIsGenerating,
+    isCreatingStory,
+    storySaved,
+  ]);
 
   return (
     <StoryContext.Provider
