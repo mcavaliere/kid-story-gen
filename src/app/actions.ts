@@ -46,3 +46,7 @@ export async function createStory(
     throw new Error(`story create error:  `, error.toString());
   }
 }
+
+export async function getStories(): Promise<Story[]> {
+  return await prisma.story.findMany();
+}

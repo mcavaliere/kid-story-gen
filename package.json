@@ -19,6 +19,7 @@
     "ai": "^2.2.31",
     "best-effort-json-parser": "^1.0.1",
     "clsx": "^2.1.0",
+    "dayjs": "^1.11.10",
     "framer-motion": "^11.0.3",
     "lodash": "^4.17.21",
     "lucide-react": "^0.303.0",
