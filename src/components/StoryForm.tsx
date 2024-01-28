@@ -31,10 +31,10 @@ export function StoryForm({ form }: GenratorFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-row items-start"
+        className="flex flex-row items-center"
       >
         <Heading size="h3" className="inline-block mr-2">
-          Give me a story for a{' '}
+          Give me a story for{' '}
         </Heading>
 
         <FormField
@@ -42,7 +42,7 @@ export function StoryForm({ form }: GenratorFormProps) {
           name="ageGroup"
           render={({ field }) => {
             return (
-              <FormItem className="inline-block">
+              <FormItem className="inline-block relative">
                 <FormControl>
                   <Select onValueChange={field.onChange}>
                     <SelectTrigger className="w-[180px]">
@@ -57,7 +57,7 @@ export function StoryForm({ form }: GenratorFormProps) {
                     </SelectContent>
                   </Select>
                 </FormControl>
-                <FormMessage className="pl-3" />
+                <FormMessage className="pl-3 absolute" />
               </FormItem>
             );
           }}
@@ -71,7 +71,7 @@ export function StoryForm({ form }: GenratorFormProps) {
           control={form.control}
           name="topic"
           render={({ field }) => (
-            <FormItem className="inline-block">
+            <FormItem className="inline-block relative">
               <FormControl>
                 <Select onValueChange={field.onChange}>
                   <SelectTrigger className="w-[180px]">
@@ -86,7 +86,7 @@ export function StoryForm({ form }: GenratorFormProps) {
                   </SelectContent>
                 </Select>
               </FormControl>
-              <FormMessage className="pl-3" />
+              <FormMessage className="absolute pl-3" />
             </FormItem>
           )}
         />
