@@ -1,5 +1,6 @@
 import { Heading } from '@/components/Heading';
 import { Separator } from '@/components/ui/separator';
+import { QueryClientProvider } from '@/context/QueryClientProvider';
 import { StoryContextProvider } from '@/context/StoryContext';
 import { StoryFormContainer } from '../components/StoryFormContainer';
 
@@ -23,9 +24,11 @@ export default function Home() {
 
         <Separator className="my-10" />
 
-        <StoryContextProvider>
-          <StoryFormContainer />
-        </StoryContextProvider>
+        <QueryClientProvider>
+          <StoryContextProvider>
+            <StoryFormContainer />
+          </StoryContextProvider>
+        </QueryClientProvider>
       </div>
     </main>
   );

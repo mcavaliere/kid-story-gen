@@ -1,16 +1,20 @@
 'use server';
 
+import { replaceTemplateVars } from '@/lib/replaceTemplateVars';
 import { StoryCompletionJson } from '@/types';
 import OpenAI from 'openai';
-import { replaceTemplateVars } from '@/lib/replaceTemplateVars';
 
+import { prisma } from '@/lib/server/prismaClientInstance';
 import { prompt as promptTemplate } from '@/prompts/create-story-image';
+import { Prisma, Story } from '@prisma/client';
 
 export type ImageGenerationResponse = {
   url: string;
 };
 
-export async function createImage(story: StoryCompletionJson): Promise<ImageGenerationResponse> {
+export async function createImage(
+  story: StoryCompletionJson
+): Promise<ImageGenerationResponse> {
   const prompt = replaceTemplateVars(promptTemplate, story);
 
   try {
@@ -26,5 +30,19 @@ export async function createImage(story: StoryCompletionJson): Promise<ImageGene
   } catch (err) {
     console.warn(`---------------- error generating image:  `, err);
     throw err;
+  }
+}
+
+export async function createStory(
+  data: Prisma.StoryCreateInput
+): Promise<{ storyId: Story['id'] | undefined }> {
+  try {
+    const story = await prisma.story.create({
+      data,
+    });
+
+    return { storyId: story?.id || undefined };
+  } catch (error: any) {
+    throw new Error(`story create error:  `, error.toString());
   }
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { useCompletion } from 'ai/react';
 import { createContext, useContext } from 'react';
 import { UseFormReturn, useForm } from 'react-hook-form';
@@ -9,6 +10,7 @@ import * as z from 'zod';
 import { ImageGenerationResponse, createImage } from '@/app/actions';
 import { AGE_GROUPS } from '@/lib/constants';
 import { parseCompletion } from '@/lib/parseCompletion';
+import { Prisma } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
 
@@ -18,6 +20,7 @@ export type StoryContextType = {
   imageIsGenerating: boolean;
   imagePath?: string;
   completion?: string;
+  completionJson?: Record<string, unknown | any>;
   storyContentIsLoading?: boolean;
   onSubmit: (values: StoryFormSchemaType) => Promise<void>;
   themes?: string[];
@@ -41,7 +44,11 @@ export function StoryContextProvider({
     isLoading: storyContentIsLoading,
     complete,
   } = useCompletion({
-    api: '/api/stories/create',
+    api: '/api/stories/generate',
+    onFinish: async (prompt: string, completion: string) => {
+      const json = parseCompletion(completion);
+      await mutateCreateStory(json);
+    },
   });
 
   const form = useForm<z.infer<typeof storyFormSchema>>({
@@ -65,6 +72,23 @@ export function StoryContextProvider({
     setImageGenResponse(undefined);
     await complete(JSON.stringify(form.getValues()));
   }
+
+  // For saving the story when generation is complete.
+  const { isLoading: isCreatingStory, mutateAsync: mutateCreateStory } =
+    useMutation({
+      mutationFn: async (data: Prisma.StoryCreateInput) => {
+        const response = await fetch('/api/stories/create', {
+          method: 'POST',
+          body: JSON.stringify(data),
+        });
+
+        const json = await response.json();
+
+        if (!response.ok) throw new Error(response.statusText);
+
+        return json;
+      },
+    });
 
   // JSONified streaming chat response.
   const completionJson = parseCompletion(completion);
@@ -101,6 +125,7 @@ export function StoryContextProvider({
     <StoryContext.Provider
       value={{
         completion,
+        completionJson,
         form,
         imagePath,
         imageGenResponse,
