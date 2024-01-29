@@ -77,7 +77,7 @@ export function StoryContextProvider({
   }
 
   // For saving the story when generation is complete.
-  const { isLoading: isCreatingStory, mutateAsync: mutateCreateStory } =
+  const { isPending: isCreatingStory, mutateAsync: mutateCreateStory } =
     useMutation({
       mutationFn: async (data: Prisma.StoryCreateInput) => {
         const response = await fetch('/api/stories/create', {

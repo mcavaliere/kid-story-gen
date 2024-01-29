@@ -9,7 +9,9 @@ export type StoryDetailPageProps = {
   };
 };
 
-export default async function StoryDetailPage({ params: { id } }) {
+export default async function StoryDetailPage({
+  params: { id },
+}: StoryDetailPageProps) {
   const story = await getStory(id);
 
   if (!story) {
