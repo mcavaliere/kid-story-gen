@@ -8,9 +8,7 @@ import OpenAI from 'openai';
 const openai = new OpenAI();
 
 // Set the runtime to edge for best performance
-// TODO: prisma doesn't work with the edge runtime, unless you use Accelerate. Re-examine when we
-//  are working on performance improvements.
-// export const runtime = 'edge';
+export const runtime = 'edge';
 
 // const divider = '----------------------------------------------------\n';
 
