@@ -5,7 +5,7 @@ import { StoryCompletionJson } from '@/types';
 import OpenAI from 'openai';
 
 import { prisma } from '@/lib/server/prismaClientInstance';
-import { prompt as promptTemplate } from '@/prompts/create-story-image';
+import { prompt as promptTemplate } from '@/prompts/openai/create-story-image';
 import { Prisma, Story } from '@prisma/client';
 
 export type ImageGenerationResponse = {
