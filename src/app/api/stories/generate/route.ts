@@ -1,6 +1,6 @@
 import { replaceTemplateVars } from '@/lib/replaceTemplateVars';
 import { prompt as CREATE_STORY_PROMPT } from '@/prompts/openai/create-story';
-import { prompt as SYSTEM_PROMPT } from '@/prompts/system';
+import { prompt as SYSTEM_PROMPT } from '@/prompts/openai/system';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import OpenAI from 'openai';
 

@@ -19,7 +19,9 @@ export interface ImageGenerationResponse {
   }>;
 }
 
-export async function generation(prompt: string): Promise<ImageGenerationResponse> {
+export async function generation(
+  prompt: string
+): Promise<ImageGenerationResponse> {
   const engineId = 'stable-diffusion-v1-6';
   const url = `${BASE_URL}/v1/generation/${engineId}/text-to-image`;
 
