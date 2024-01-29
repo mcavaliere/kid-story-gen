@@ -25,19 +25,28 @@ export async function generation(
   const engineId = 'stable-diffusion-v1-6';
   const url = `${BASE_URL}/v1/generation/${engineId}/text-to-image`;
 
+  const prompts = [
+    {
+      text: prompt,
+      weight: 1,
+    },
+    // Negative prompt, to prevent the model from generating text.
+    {
+      text: 'text',
+      weight: -1,
+    },
+  ];
+  console.log({ prompts });
+
   const response = await fetch(url, {
     method: 'POST',
     headers,
     body: JSON.stringify({
-      text_prompts: [
-        {
-          text: prompt,
-        },
-      ],
-      cfg_scale: 7,
-      height: 1024,
-      width: 1024,
-      steps: 30,
+      text_prompts: prompts,
+      cfg_scale: 20,
+      height: 512,
+      width: 512,
+      steps: 20,
       samples: 1,
     }),
   });

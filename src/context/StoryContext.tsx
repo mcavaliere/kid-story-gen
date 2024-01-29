@@ -110,7 +110,6 @@ export function StoryContextProvider({
       setImageIsGenerating(true);
       createImage(completionJson)
         .then((image) => {
-          console.log(`image response:  `, { image });
           setImageGenResponse(image);
           setImageIsGenerating(false);
         })
