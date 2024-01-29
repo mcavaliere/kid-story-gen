@@ -5,7 +5,7 @@ It should be engaging to children who are in the {{ageGroup}} age group.
 
 The topic of the story will be {{topic}}.
 
-Make the story exactly 2 paragraphs long. Keep all paragraphs brief, no more than 3 sentences each.
+Make the story exactly 5 paragraphs long. Keep all paragraphs brief, no more than 3 sentences each.
 
 Output the story as a JSON object, using the following template. Output will consist of the template and its content, nothing else. Output will always be perfectly valid JSON. Here is what you will fill into each field:
 
