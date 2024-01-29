@@ -9,6 +9,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 
 export default async function StoriesListPage() {
   const stories = await getStories();
@@ -23,17 +24,23 @@ export default async function StoriesListPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Synopsis</TableHead>
-              <TableHead>Characters</TableHead>
-              <TableHead>Character Descriptions</TableHead>
-              <TableHead>Created At</TableHead>
+              <TableHead className="font-bold">Title</TableHead>
+              <TableHead className="font-bold">Synopsis</TableHead>
+              <TableHead className="font-bold">Characters</TableHead>
+              <TableHead className="font-bold">
+                Character Descriptions
+              </TableHead>
+              <TableHead className="font-bold">Created At</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {stories?.map((story) => (
               <TableRow key={story.id}>
-                <TableCell>{story.title}</TableCell>
+                <TableCell>
+                  <Link href={`stories/${story.id}`} className="underline">
+                    {story.title}
+                  </Link>
+                </TableCell>
                 <TableCell>{story.synopsis}</TableCell>
                 <TableCell>{story.characters}</TableCell>
                 <TableCell>{story.characterDescriptions}</TableCell>

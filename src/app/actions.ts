@@ -48,5 +48,17 @@ export async function createStory(
 }
 
 export async function getStories(): Promise<Story[]> {
-  return await prisma.story.findMany();
+  return await prisma.story.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+}
+
+export async function getStory(id: string): Promise<Story | null> {
+  return await prisma.story.findUnique({
+    where: {
+      id,
+    },
+  });
 }
