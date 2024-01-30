@@ -18,6 +18,8 @@ export async function POST(req: Request) {
   const promptParams = JSON.parse(input.prompt);
   const storyPrompt = replaceTemplateVars(CREATE_STORY_PROMPT, promptParams);
 
+  console.log({ storyPrompt });
+
   const response = await openai.beta.chat.completions
     .stream({
       messages: [
@@ -26,7 +28,7 @@ export async function POST(req: Request) {
       ],
       model: 'gpt-3.5-turbo',
       stream: true,
-      temperature: 0.3,
+      temperature: 0.9,
     })
     .on('error', (err) => {
       console.log(`---------------- OpenAI ERROR:  `, err);
