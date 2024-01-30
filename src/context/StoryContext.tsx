@@ -70,6 +70,8 @@ export function StoryContextProvider({
   >(undefined);
   const [imageIsGenerating, setImageIsGenerating] = useState<boolean>(false);
 
+  const imagePath = imageGenResponse?.url;
+
   async function onSubmit(values: StoryFormSchemaType) {
     // Reset this so we can generate a new image.
     setImageGenResponse(undefined);
@@ -98,12 +100,8 @@ export function StoryContextProvider({
 
   // Generate an image for the story title one time, once the title exists.
   useEffect(() => {
-    // console.log({completionJson});
     if (
-      completionJson?.title &&
-      completionJson?.synopsis &&
       completionJson?.setting &&
-      completionJson?.characters &&
       completionJson?.characterDescriptions &&
       !imageGenResponse &&
       !imageIsGenerating
@@ -122,10 +120,6 @@ export function StoryContextProvider({
         });
     }
   }, [completionJson, imageGenResponse, imageIsGenerating]);
-
-  const imagePath = imageGenResponse?.url;
-  // Static image for testing.
-  // const imagePath = "https://oaidalleapiprodscus.blob.core.windows.net/private/org-Ai6FnzlH3437nQyQTuNvsFot/user-bg6ZdeJvNKqLmlYdr5Mn39VJ/img-CU3JL6V6IoX85jGTOln1deGA.png?st=2024-01-26T16%3A17%3A30Z&se=2024-01-26T18%3A17%3A30Z&sp=r&sv=2021-08-06&sr=b&rscd=inline&rsct=image/png&skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2024-01-25T21%3A26%3A57Z&ske=2024-01-26T21%3A26%3A57Z&sks=b&skv=2021-08-06&sig=NfkchL8Lnb9%2B/Bxe3ax/gd44vxAevKZYEY7ArLIC2cc%3D&w=640&q=75"
 
   useEffect(() => {
     if (
