@@ -15,6 +15,8 @@ model Story {
   title     String
   content   String
   synopsis  String?
+  topic    String?
+  ageGroup String?
   characters String?
   characterDescriptions String?
   setting  String?

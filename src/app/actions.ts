@@ -1,7 +1,6 @@
 'use server';
 
 import { replaceTemplateVars } from '@/lib/replaceTemplateVars';
-import { StoryCompletionJson } from '@/types';
 
 import { prisma } from '@/lib/server/prismaClientInstance';
 import * as stabilityai from '@/lib/server/stabilityai';
@@ -13,8 +12,13 @@ export type ImageGenerationResponse = {
   url: string;
 };
 
-export async function createImage(story: StoryCompletionJson): Promise<any> {
-  const prompt = replaceTemplateVars(promptTemplate, story);
+export type CreateImageParams = {
+  characterDescriptions?: string;
+  setting?: string;
+};
+
+export async function createImage(params: CreateImageParams): Promise<any> {
+  const prompt = replaceTemplateVars(promptTemplate, params);
 
   try {
     const response = await stabilityai.generation(prompt);

@@ -102,13 +102,17 @@ export function StoryContextProvider({
     if (
       completionJson?.title &&
       completionJson?.synopsis &&
+      completionJson?.setting &&
       completionJson?.characters &&
       completionJson?.characterDescriptions &&
       !imageGenResponse &&
       !imageIsGenerating
     ) {
       setImageIsGenerating(true);
-      createImage(completionJson)
+      createImage({
+        setting: completionJson.setting,
+        characterDescriptions: completionJson.characterDescriptions,
+      })
         .then((image) => {
           setImageGenResponse(image);
           setImageIsGenerating(false);
