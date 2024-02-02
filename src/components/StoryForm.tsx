@@ -102,24 +102,34 @@ export function StoryForm({ form }: GenratorFormProps) {
             <FormField
               control={form.control}
               name="length"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel>Story Length</FormLabel>
-                  <FormControl>
-                    <Slider
-                      defaultValue={[
-                        // Start in the middle.
-                        Math.round(
-                          STORY_LENGTH_RANGE.min / STORY_LENGTH_RANGE.max
-                        ),
-                      ]}
-                      min={STORY_LENGTH_RANGE.min}
-                      max={STORY_LENGTH_RANGE.max}
-                      step={1}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
+              render={({ field }) => {
+                console.log('field: ', field);
+                return (
+                  <div className="flex flex-col w-full">
+                    <FormItem className="w-full">
+                      <FormLabel>Story Length</FormLabel>
+                      <FormControl>
+                        <Slider
+                          defaultValue={[
+                            // Start in the middle.
+                            Math.round(
+                              STORY_LENGTH_RANGE.min / STORY_LENGTH_RANGE.max
+                            ),
+                          ]}
+                          min={STORY_LENGTH_RANGE.min}
+                          max={STORY_LENGTH_RANGE.max}
+                          step={50}
+                          onValueChange={(value) => {
+                            form.setValue(field.name, value[0]);
+                          }}
+                          value={[field.value]}
+                        />
+                      </FormControl>
+                    </FormItem>
+                    <span>{field.value} words</span>
+                  </div>
+                );
+              }}
             />
           </div>
         </div>

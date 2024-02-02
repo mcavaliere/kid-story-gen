@@ -36,7 +36,7 @@ export async function generation(
       weight: -1,
     },
   ];
-  console.log({ prompts });
+  console.log('prompts for stability: ', { prompts });
 
   const response = await fetch(url, {
     method: 'POST',

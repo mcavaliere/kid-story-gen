@@ -59,6 +59,7 @@ export function StoryContextProvider({
     defaultValues: {
       ageGroup: '', // Set the default value to the first option
       topic: '',
+      length: 0,
     },
   });
   const currentAgeGroup = form.watch('ageGroup');
