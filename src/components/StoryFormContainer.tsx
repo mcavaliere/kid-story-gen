@@ -4,14 +4,13 @@ import { StoryForm } from '@/components/StoryForm';
 
 import Image from 'next/image';
 
-import { parseCompletion } from '../lib/parseCompletion';
-
 import { useStoryContext } from '@/context/StoryContext';
 import { StoryDisplay } from './StoryDisplay';
 import { StoryImageLoader } from './StoryImageLoader';
 
 export function StoryFormContainer() {
-  const { form, imageIsGenerating, imagePath, completion } = useStoryContext()!;
+  const { form, imageIsGenerating, imagePath, completion, storyBody } =
+    useStoryContext()!;
 
   return (
     <div className="p-4 pb-0 rounded-md bg-card">
@@ -36,9 +35,7 @@ export function StoryFormContainer() {
           ) : null}
         </div>
         <div className="w-full md:w-1/2 md:pl-4">
-          {completion ? (
-            <StoryDisplay {...parseCompletion(completion)} />
-          ) : null}
+          {completion ? <StoryDisplay content={storyBody} /> : null}
         </div>
       </div>
     </div>
