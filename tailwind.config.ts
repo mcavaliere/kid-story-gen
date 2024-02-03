@@ -14,17 +14,17 @@ const config = {
     },
     extend: {
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
+        border: '#29457A',
+        input: '#29457A',
         ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        background: '#E1E8F5',
+        foreground: '#29457A',
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
+          DEFAULT: '#1F345B',
           foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
+          DEFAULT: '#4973C1',
           foreground: 'hsl(var(--secondary-foreground))',
         },
         destructive: {

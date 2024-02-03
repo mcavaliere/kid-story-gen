@@ -14,10 +14,10 @@ export function StoryFormContainer() {
   const { form, imageIsGenerating, imagePath, completion } = useStoryContext()!;
 
   return (
-    <div className="p-4 rounded-md bg-gray-100">
+    <div className="p-4 pb-0 rounded-md bg-card">
       {form ? <StoryForm form={form} /> : null}
 
-      <div className="mt-4 flex flex-col md:flex-row bg--100 w-full">
+      <div className="mt-4 flex flex-col md:flex-row h-auto md:max-h-[500px] w-full">
         <div className="w-full md:w-1/2">
           {imageIsGenerating || imagePath ? (
             <div className="flex justify-center items-center w-full h-auto min-h-[200px] relative">
