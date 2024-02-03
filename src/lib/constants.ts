@@ -151,3 +151,7 @@ export const STORY_LENGTH_RANGE: StoryLengthRange = {
   min: 100,
   max: 5000,
 };
+
+export const STORY_LENGTH_MIDPOINT = Math.floor(
+  (STORY_LENGTH_RANGE.max + STORY_LENGTH_RANGE.min) / 2
+);

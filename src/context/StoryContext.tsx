@@ -8,7 +8,7 @@ import { UseFormReturn, useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { ImageGenerationResponse, createImage } from '@/app/actions';
-import { AGE_GROUPS } from '@/lib/constants';
+import { AGE_GROUPS, STORY_LENGTH_MIDPOINT } from '@/lib/constants';
 import { parseCompletion } from '@/lib/parseCompletion';
 import { Prisma } from '@prisma/client';
 import { useEffect, useState } from 'react';
@@ -59,7 +59,7 @@ export function StoryContextProvider({
     defaultValues: {
       ageGroup: '', // Set the default value to the first option
       topic: '',
-      length: 0,
+      length: STORY_LENGTH_MIDPOINT,
     },
   });
   const currentAgeGroup = form.watch('ageGroup');
