@@ -2,8 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { useCompletion } from 'ai/react';
-import usePreviousValue from 'beautiful-react-hooks/usePreviousValue';
+
 import { createContext, useContext } from 'react';
 import { UseFormReturn, useForm } from 'react-hook-form';
 
@@ -11,7 +10,8 @@ import * as z from 'zod';
 
 import { ImageGenerationResponse, createImage } from '@/app/actions';
 import { AGE_GROUPS, STORY_LENGTH_MIDPOINT } from '@/lib/constants';
-import { parseCompletion } from '@/lib/parseCompletion';
+import { useStoryGeneration } from '@/lib/hooks/useStoryGeneration';
+
 import { Prisma } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
@@ -50,21 +50,17 @@ export function StoryContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [storyGenerationComplete, setStoryGenerationComplete] =
-    useState<boolean>(false);
   const [storySaved, setStorySaved] = useState<boolean>(false);
 
   const {
-    completion,
-    isLoading: storyContentIsLoading,
     complete,
-  } = useCompletion({
-    api: '/api/stories/generate',
-    onFinish: async () => {
-      setStoryGenerationComplete(true);
-    },
-  });
-  const previousCompletion = usePreviousValue(completion);
+    completion,
+    completionJson,
+    storyTitle,
+    storyBody,
+    storyContentIsLoading,
+    storyGenerationComplete,
+  } = useStoryGeneration();
 
   const form = useForm<z.infer<typeof storyFormSchema>>({
     resolver: zodResolver(storyFormSchema),
@@ -108,18 +104,6 @@ export function StoryContextProvider({
       },
     });
 
-  // JSONified streaming chat response.
-  // We track the last completion value as a fallback. If any error throws midway through streaming,
-  //  we can use the last completion value to display the story briefly and prevent flicker from the story going blank.
-  const completionJson = parseCompletion({
-    completion,
-    fallback: previousCompletion
-      ? parseCompletion({ completion: previousCompletion })
-      : undefined,
-  });
-  const storyBody = completionJson?.content?.split(/\n\n/);
-  const storyTitle = completionJson?.title;
-
   // Generate an image for the story title one time, once the title exists.
   useEffect(() => {
     if (
@@ -156,16 +140,18 @@ export function StoryContextProvider({
       mutateCreateStory({
         ...completionJson,
         imageUrl: imageGenResponse.url,
-      }).then((response) => {
+      }).then(() => {
         setStorySaved(true);
       });
     }
   }, [
-    storyGenerationComplete,
-    storyContentIsLoading,
+    completionJson,
     imageGenResponse,
     imageIsGenerating,
     isCreatingStory,
+    mutateCreateStory,
+    storyContentIsLoading,
+    storyGenerationComplete,
     storySaved,
   ]);
 
