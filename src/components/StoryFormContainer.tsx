@@ -2,15 +2,12 @@
 
 import { StoryForm } from '@/components/StoryForm';
 
-import Image from 'next/image';
-
 import { useStoryContext } from '@/context/StoryContext';
 import { StoryDisplay } from './StoryDisplay';
-import { StoryImageLoader } from './StoryImageLoader';
+import { StoryImage } from './StoryImage';
 
 export function StoryFormContainer() {
-  const { form, imageIsGenerating, imagePath, storyTitle, storyBody } =
-    useStoryContext()!;
+  const { form } = useStoryContext()!;
 
   return (
     <div className="p-4 pb-0 rounded-md bg-card">
@@ -18,21 +15,7 @@ export function StoryFormContainer() {
 
       <div className="mt-4 flex flex-col md:flex-row h-auto md:max-h-[500px] w-full">
         <div className="w-full md:w-1/2">
-          {imageIsGenerating || imagePath ? (
-            <div className="flex justify-center items-center w-full h-auto min-h-[200px] relative">
-              {imageIsGenerating ? <StoryImageLoader /> : null}
-
-              {imagePath ? (
-                <Image
-                  src={imagePath}
-                  alt={`Cover image for story`}
-                  width="512"
-                  height="512"
-                  style={{ width: '100%' }}
-                />
-              ) : null}
-            </div>
-          ) : null}
+          <StoryImage />
         </div>
         <div className="w-full md:w-1/2 md:pl-4">
           <StoryDisplay />

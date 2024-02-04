@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
 
 export type StoryContextType = {
-  form: UseFormReturn<z.infer<typeof storyFormSchema>>;
+  form?: UseFormReturn<z.infer<typeof storyFormSchema>>;
   imageGenResponse?: ImageGenerationResponse;
   imageIsGenerating: boolean;
   imagePath?: string;
@@ -23,14 +23,21 @@ export type StoryContextType = {
   completionJson?: Record<string, unknown | any>;
   storyBody: string[];
   storyTitle: string;
-  storyContentIsLoading?: boolean;
+  storyContentIsLoading: boolean;
   onSubmit: (values: StoryFormSchemaType) => Promise<void>;
   themes?: string[];
 };
 
-export const StoryContext = createContext<StoryContextType | undefined>(
-  undefined
-);
+export const defaultStoryContext: StoryContextType = {
+  imageIsGenerating: false,
+  storyContentIsLoading: false,
+  storyBody: [],
+  storyTitle: '',
+  onSubmit: async (values) => Promise.resolve(void 0),
+};
+
+export const StoryContext =
+  createContext<StoryContextType>(defaultStoryContext);
 
 export function useStoryContext() {
   return useContext(StoryContext);
