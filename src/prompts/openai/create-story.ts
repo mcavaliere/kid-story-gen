@@ -9,6 +9,8 @@ Make the story approximately {{length}} words long. Keep all paragraphs brief, n
 
 Do not start the story with "once upon a time." Start the story in a unique and creative way.
 
+Avoid plagiarism at all costs. The story must be original.
+
 Output the story as a JSON object, using the following template. Output will consist of the template and its content, nothing else. Output will always be perfectly valid JSON. Here is what you will fill into each field:
 
 - title: The title of the story.
