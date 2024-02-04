@@ -9,7 +9,7 @@ import { StoryDisplay } from './StoryDisplay';
 import { StoryImageLoader } from './StoryImageLoader';
 
 export function StoryFormContainer() {
-  const { form, imageIsGenerating, imagePath, completion, storyBody } =
+  const { form, imageIsGenerating, imagePath, storyTitle, storyBody } =
     useStoryContext()!;
 
   return (
@@ -35,7 +35,7 @@ export function StoryFormContainer() {
           ) : null}
         </div>
         <div className="w-full md:w-1/2 md:pl-4">
-          {completion ? <StoryDisplay content={storyBody} /> : null}
+          <StoryDisplay />
         </div>
       </div>
     </div>

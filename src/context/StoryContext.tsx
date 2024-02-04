@@ -22,6 +22,7 @@ export type StoryContextType = {
   completion?: string;
   completionJson?: Record<string, unknown | any>;
   storyBody: string[];
+  storyTitle: string;
   storyContentIsLoading?: boolean;
   onSubmit: (values: StoryFormSchemaType) => Promise<void>;
   themes?: string[];
@@ -100,6 +101,7 @@ export function StoryContextProvider({
   // JSONified streaming chat response.
   const completionJson = parseCompletion(completion);
   const storyBody = completionJson?.content?.split(/\n\n/);
+  const storyTitle = completionJson?.title;
 
   // Generate an image for the story title one time, once the title exists.
   useEffect(() => {
@@ -161,6 +163,7 @@ export function StoryContextProvider({
         imageIsGenerating,
         storyContentIsLoading,
         storyBody,
+        storyTitle,
         onSubmit,
         themes,
       }}

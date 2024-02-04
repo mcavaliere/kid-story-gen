@@ -103,7 +103,6 @@ export function StoryForm({ form }: GenratorFormProps) {
               control={form.control}
               name="length"
               render={({ field }) => {
-                console.log('field: ', field);
                 return (
                   <div className="flex flex-col w-full">
                     <FormItem className="w-full">
