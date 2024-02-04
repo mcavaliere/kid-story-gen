@@ -3,8 +3,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useCompletion } from 'ai/react';
+import usePreviousValue from 'beautiful-react-hooks/usePreviousValue';
 import { createContext, useContext } from 'react';
 import { UseFormReturn, useForm } from 'react-hook-form';
+
 import * as z from 'zod';
 
 import { ImageGenerationResponse, createImage } from '@/app/actions';
@@ -62,6 +64,7 @@ export function StoryContextProvider({
       setStoryGenerationComplete(true);
     },
   });
+  const previousCompletion = usePreviousValue(completion);
 
   const form = useForm<z.infer<typeof storyFormSchema>>({
     resolver: zodResolver(storyFormSchema),
@@ -106,7 +109,14 @@ export function StoryContextProvider({
     });
 
   // JSONified streaming chat response.
-  const completionJson = parseCompletion(completion);
+  // We track the last completion value as a fallback. If any error throws midway through streaming,
+  //  we can use the last completion value to display the story briefly and prevent flicker from the story going blank.
+  const completionJson = parseCompletion({
+    completion,
+    fallback: previousCompletion
+      ? parseCompletion({ completion: previousCompletion })
+      : undefined,
+  });
   const storyBody = completionJson?.content?.split(/\n\n/);
   const storyTitle = completionJson?.title;
 
