@@ -18,7 +18,9 @@ Output the story as a JSON object, using the following template. Output will con
 - content: The content of the story. Separate each paragraph with two newlines.
 - setting: The setting for the cover image of the story. Includes environment, weather, the main characters, and an activity they are engaged in.
 
-Fill them in from left to right. Here is the template:
+Fill them in from left to right. Replace any special characters (especially single and double quotes) with their HTML escape sequences.
+
+Here is the template:
 
 {"title": "{{storyTitle}}", "synopsis": "{{oneSentenceSynopsis}}", "setting": "{{setting}}", "characters": "{{characterNames}}", "characterDescriptions": "{{characterDescriptions}}", "content": "{{storyContent}}"}
 
