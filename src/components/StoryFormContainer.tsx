@@ -10,7 +10,7 @@ export function StoryFormContainer() {
   const { form } = useStoryContext()!;
 
   return (
-    <div className="p-4 pb-0 rounded-md bg-card">
+    <div className="p-4 pb-0 rounded-md ">
       {form ? <StoryForm form={form} /> : null}
 
       <div className="mt-4 flex flex-col md:flex-row h-auto md:max-h-[500px] w-full">

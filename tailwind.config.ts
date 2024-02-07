@@ -17,8 +17,8 @@ const config = {
         border: '#29457A',
         input: '#29457A',
         ring: 'hsl(var(--ring))',
-        background: '#E1E8F5',
-        foreground: '#29457A',
+        background: '#C2BCB2',
+        foreground: '#241d1f',
         primary: {
           DEFAULT: '#1F345B',
           foreground: 'hsl(var(--primary-foreground))',
