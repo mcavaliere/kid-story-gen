@@ -4,12 +4,10 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Slider } from '@/components/ui/slider';
 import { useStoryContext } from '@/context/StoryContext';
-import { AGE_GROUPS, STORY_LENGTH_RANGE } from '@/lib/constants';
+import { AGE_GROUPS } from '@/lib/constants';
 import { StoryFormSchemaType } from '@/lib/storyFormSchema';
 import { type UseFormReturn } from 'react-hook-form';
 import { Heading } from './Heading';
@@ -90,9 +88,13 @@ export function StoryForm({ form }: GenratorFormProps) {
               </FormItem>
             )}
           />
+
+          <Button type="submit" className="inline-block ml-2">
+            Make the story!
+          </Button>
         </div>
 
-        <div className="flex flex-col w-full justify-center items-center mt-4">
+        {/* <div className="flex flex-col w-full justify-center items-center mt-4">
           <div className="flex flex-row w-full">
             <Heading size="h3" className="inline-block mx-auto text-center">
               Options
@@ -131,13 +133,11 @@ export function StoryForm({ form }: GenratorFormProps) {
               }}
             />
           </div>
-        </div>
+        </div> */}
 
-        <div className="flex flex-row justify-end">
-          <Button type="submit" className="inline-block ml-2">
-            Make the story!
-          </Button>
-        </div>
+        {/* <div className="flex flex-row justify-end">
+
+        </div> */}
 
         {storyContentIsLoading ? (
           <Spinner className="inline-block ml-2 text-black" />

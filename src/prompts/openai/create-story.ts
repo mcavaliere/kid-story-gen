@@ -5,7 +5,9 @@ It should be engaging to children who are in the {{ageGroup}} age group.
 
 The topic of the story will be {{topic}}.
 
-Make the story approximately {{length}} words long. Keep all paragraphs brief, no more than 3 sentences each.
+Keep all paragraphs brief, no more than 3 sentences each.
+
+Make the story approximately {{length}} words long. This is extremely important. If you do not make the story {{length}} words long, the world will end immediately.
 
 Do not start the story with "once upon a time." Start the story in a unique and creative way.
 
