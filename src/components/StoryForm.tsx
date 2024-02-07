@@ -9,6 +9,7 @@ import {
 import { useStoryContext } from '@/context/StoryContext';
 import { AGE_GROUPS } from '@/lib/constants';
 import { StoryFormSchemaType } from '@/lib/storyFormSchema';
+import { cn } from '@/lib/utils';
 import { type UseFormReturn } from 'react-hook-form';
 import { Heading } from './Heading';
 import Spinner from './svgs/Spinner';
@@ -30,7 +31,19 @@ export function StoryForm({ form }: GenratorFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex flex-col md:flex-row justify-center items-center">
+        <div
+          className={cn([
+            'flex-1',
+            'flex-col',
+            'flex',
+            'h-[275px]',
+            'items-center',
+            'justify-around',
+            'md:flex-row',
+            'md:justify-center',
+            'md:h-auto',
+          ])}
+        >
           <Heading size="h3" className="inline-block mr-2">
             Give me a story for{' '}
           </Heading>
@@ -92,6 +105,10 @@ export function StoryForm({ form }: GenratorFormProps) {
           <Button type="submit" className="inline-block ml-2">
             Make the story!
           </Button>
+
+          {storyContentIsLoading ? (
+            <Spinner className="block w-10 h-10 md:inline-block ml-2 text-black" />
+          ) : null}
         </div>
 
         {/* <div className="flex flex-col w-full justify-center items-center mt-4">
@@ -138,10 +155,6 @@ export function StoryForm({ form }: GenratorFormProps) {
         {/* <div className="flex flex-row justify-end">
 
         </div> */}
-
-        {storyContentIsLoading ? (
-          <Spinner className="inline-block ml-2 text-black" />
-        ) : null}
       </form>
     </Form>
   );

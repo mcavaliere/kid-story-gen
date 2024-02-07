@@ -13,7 +13,7 @@ export function StoryFormContainer() {
     <div className="p-4 pb-0 rounded-md ">
       {form ? <StoryForm form={form} /> : null}
 
-      <div className="mt-4 flex flex-col md:flex-row h-auto md:max-h-[500px] w-full">
+      <div className="mt-10 flex flex-col md:flex-row h-auto md:max-h-[500px] w-full">
         <div className="w-full md:w-1/2">
           <StoryImage />
         </div>
