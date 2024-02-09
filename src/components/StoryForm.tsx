@@ -9,6 +9,7 @@ import {
 import { useStoryContext } from '@/context/StoryContext';
 import { AGE_GROUPS } from '@/lib/constants';
 import { StoryFormSchemaType } from '@/lib/storyFormSchema';
+import { cn } from '@/lib/utils';
 import { type UseFormReturn } from 'react-hook-form';
 import { Heading } from './Heading';
 import Spinner from './svgs/Spinner';
@@ -20,83 +21,88 @@ import {
   SelectValue,
 } from './ui/select';
 
-export type GenratorFormProps = {
+export type StoryFormProps = {
   form: UseFormReturn<StoryFormSchemaType>;
+  className?: string;
 };
 
-export function StoryForm({ form }: GenratorFormProps) {
+export function StoryForm({ form, className = '' }: StoryFormProps) {
   const { onSubmit, storyContentIsLoading, themes } = useStoryContext()!;
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex flex-col md:flex-row justify-center items-center">
-          <Heading size="h3" className="inline-block mr-2">
-            Give me a story for{' '}
-          </Heading>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className={cn(
+          'flex flex-col min-h-[275px] md:flex-row justify-around md:justify-center items-center ',
+          className
+        )}
+      >
+        <Heading size="h3" className="inline-block mr-2">
+          Give me a story for{' '}
+        </Heading>
 
-          <FormField
-            control={form.control}
-            name="ageGroup"
-            render={({ field }) => {
-              return (
-                <FormItem className="inline-block relative">
-                  <FormControl>
-                    <Select onValueChange={field.onChange}>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Age Group" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {AGE_GROUPS.map(({ name }) => (
-                          <SelectItem key={name} value={name}>
-                            {name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage className="pl-3 absolute" />
-                </FormItem>
-              );
-            }}
-          />
-
-          <Heading size="h3" className="inline-block mx-2">
-            about
-          </Heading>
-
-          <FormField
-            control={form.control}
-            name="topic"
-            render={({ field }) => (
-              <FormItem className="inline-block relative">
+        <FormField
+          control={form.control}
+          name="ageGroup"
+          render={({ field }) => {
+            return (
+              <FormItem className="inline-block relative w-[180px]">
                 <FormControl>
                   <Select onValueChange={field.onChange}>
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Topic" />
+                    <SelectTrigger className="w-full text-lg">
+                      <SelectValue placeholder="Age Group" />
                     </SelectTrigger>
                     <SelectContent>
-                      {themes?.map((theme) => (
-                        <SelectItem key={theme} value={theme}>
-                          {theme}
+                      {AGE_GROUPS.map(({ name }) => (
+                        <SelectItem key={name} value={name} className="text-xl">
+                          {name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </FormControl>
-                <FormMessage className="absolute pl-3" />
+                <FormMessage className="pl-3 absolute" />
               </FormItem>
-            )}
-          />
+            );
+          }}
+        />
 
-          <Button type="submit" className="inline-block ml-2">
-            Make the story!
-          </Button>
+        <Heading size="h3" className="inline-block mx-2">
+          about
+        </Heading>
 
-          {storyContentIsLoading ? (
-            <Spinner className="inline-block ml-2 text-black" />
-          ) : null}
-        </div>
+        <FormField
+          control={form.control}
+          name="topic"
+          render={({ field }) => (
+            <FormItem className="inline-block relative w-[180px]">
+              <FormControl>
+                <Select onValueChange={field.onChange}>
+                  <SelectTrigger className="w-full text-lg">
+                    <SelectValue placeholder="Topic" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {themes?.map((theme) => (
+                      <SelectItem key={theme} value={theme} className="text-lg">
+                        {theme}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage className="absolute pl-3" />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" className="inline-block ml-2">
+          Make the story!
+        </Button>
+
+        {storyContentIsLoading ? (
+          <Spinner className="inline-block ml-2 text-black" />
+        ) : null}
 
         {/* <div className="flex flex-col w-full justify-center items-center mt-4">
           <div className="flex flex-row w-full">
