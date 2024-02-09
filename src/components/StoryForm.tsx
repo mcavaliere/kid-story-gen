@@ -92,6 +92,10 @@ export function StoryForm({ form }: GenratorFormProps) {
           <Button type="submit" className="inline-block ml-2">
             Make the story!
           </Button>
+
+          {storyContentIsLoading ? (
+            <Spinner className="inline-block ml-2 text-black" />
+          ) : null}
         </div>
 
         {/* <div className="flex flex-col w-full justify-center items-center mt-4">
@@ -138,10 +142,6 @@ export function StoryForm({ form }: GenratorFormProps) {
         {/* <div className="flex flex-row justify-end">
 
         </div> */}
-
-        {storyContentIsLoading ? (
-          <Spinner className="inline-block ml-2 text-black" />
-        ) : null}
       </form>
     </Form>
   );
