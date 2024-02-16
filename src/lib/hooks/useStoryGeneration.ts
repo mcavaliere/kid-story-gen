@@ -1,9 +1,20 @@
 import { parseCompletion } from '@/lib/parseCompletion';
-import { useCompletion } from 'ai/react';
+import { StoryCompletionJson } from '@/types';
+import { UseCompletionHelpers, useCompletion } from 'ai/react';
 import usePreviousValue from 'beautiful-react-hooks/usePreviousValue';
 import { useState } from 'react';
 
-export function useStoryGeneration() {
+export type UseStoryGenerationReturn = {
+  completionJson: StoryCompletionJson;
+  complete: UseCompletionHelpers['complete'];
+  completion: UseCompletionHelpers['completion'];
+  previousCompletion: UseCompletionHelpers['completion'];
+  storyBody?: string[];
+  storyTitle?: string;
+  storyContentIsLoading: boolean;
+  storyGenerationComplete: boolean;
+};
+export function useStoryGeneration(): UseStoryGenerationReturn {
   const [storyGenerationComplete, setStoryGenerationComplete] =
     useState<boolean>(false);
 

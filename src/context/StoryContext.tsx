@@ -8,10 +8,11 @@ import { UseFormReturn, useForm } from 'react-hook-form';
 
 import * as z from 'zod';
 
-import { ImageGenerationResponse, createImage } from '@/app/actions';
+import { ImageGenerationResponse } from '@/app/actions';
 import { AGE_GROUPS } from '@/lib/constants';
 import { useStoryGeneration } from '@/lib/hooks/useStoryGeneration';
 
+import { useStoryImageGeneration } from '@/lib/hooks/useStoryImageGeneration';
 import { Prisma } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
@@ -71,14 +72,14 @@ export function StoryContextProvider({
       length: 500,
     },
   });
+
   const currentAgeGroup = form.watch('ageGroup');
   const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
 
-  // For image generation
-  const [imageGenResponse, setImageGenResponse] = useState<
-    ImageGenerationResponse | undefined
-  >(undefined);
-  const [imageIsGenerating, setImageIsGenerating] = useState<boolean>(false);
+  const { imageGenResponse, imageIsGenerating, setImageGenResponse } =
+    useStoryImageGeneration({
+      completionJson,
+    });
 
   const imagePath = imageGenResponse?.url;
 
@@ -104,29 +105,6 @@ export function StoryContextProvider({
         return json;
       },
     });
-
-  // Generate an image for the story title one time, once the title exists.
-  useEffect(() => {
-    if (
-      completionJson?.setting &&
-      completionJson?.characterDescriptions &&
-      !imageGenResponse &&
-      !imageIsGenerating
-    ) {
-      setImageIsGenerating(true);
-      createImage({
-        setting: completionJson.setting,
-        characterDescriptions: completionJson.characterDescriptions,
-      })
-        .then((image) => {
-          setImageGenResponse(image);
-          setImageIsGenerating(false);
-        })
-        .catch((err) => {
-          console.warn(`---------------- error creating image: `, err);
-        });
-    }
-  }, [completionJson, imageGenResponse, imageIsGenerating]);
 
   useEffect(() => {
     if (
