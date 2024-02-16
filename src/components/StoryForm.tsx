@@ -1,3 +1,4 @@
+import Spinner from '@/components/svgs/Spinner';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -12,7 +13,6 @@ import { StoryFormSchemaType } from '@/lib/storyFormSchema';
 import { cn } from '@/lib/utils';
 import { type UseFormReturn } from 'react-hook-form';
 import { Heading } from './Heading';
-import Spinner from './svgs/Spinner';
 import {
   Select,
   SelectContent,
@@ -21,11 +21,12 @@ import {
   SelectValue,
 } from './ui/select';
 
-export type GenratorFormProps = {
+export type StoryFormProps = {
   form: UseFormReturn<StoryFormSchemaType>;
+  className?: string;
 };
 
-export function StoryForm({ form }: GenratorFormProps) {
+export function StoryForm({ form, className = '' }: StoryFormProps) {
   const { onSubmit, storyContentIsLoading, themes } = useStoryContext()!;
 
   return (
@@ -53,15 +54,19 @@ export function StoryForm({ form }: GenratorFormProps) {
             name="ageGroup"
             render={({ field }) => {
               return (
-                <FormItem className="inline-block relative">
+                <FormItem className="inline-block relative w-[180px]">
                   <FormControl>
                     <Select onValueChange={field.onChange}>
-                      <SelectTrigger className="w-[180px]">
+                      <SelectTrigger className="w-full text-lg">
                         <SelectValue placeholder="Age Group" />
                       </SelectTrigger>
                       <SelectContent>
                         {AGE_GROUPS.map(({ name }) => (
-                          <SelectItem key={name} value={name}>
+                          <SelectItem
+                            key={name}
+                            value={name}
+                            className="text-xl"
+                          >
                             {name}
                           </SelectItem>
                         ))}
@@ -82,15 +87,19 @@ export function StoryForm({ form }: GenratorFormProps) {
             control={form.control}
             name="topic"
             render={({ field }) => (
-              <FormItem className="inline-block relative">
+              <FormItem className="inline-block relative w-[180px]">
                 <FormControl>
                   <Select onValueChange={field.onChange}>
-                    <SelectTrigger className="w-[180px]">
+                    <SelectTrigger className="w-full text-lg">
                       <SelectValue placeholder="Topic" />
                     </SelectTrigger>
                     <SelectContent>
                       {themes?.map((theme) => (
-                        <SelectItem key={theme} value={theme}>
+                        <SelectItem
+                          key={theme}
+                          value={theme}
+                          className="text-lg"
+                        >
                           {theme}
                         </SelectItem>
                       ))}
@@ -107,7 +116,7 @@ export function StoryForm({ form }: GenratorFormProps) {
           </Button>
 
           {storyContentIsLoading ? (
-            <Spinner className="block w-10 h-10 md:inline-block ml-2 text-black" />
+            <Spinner className="inline-block ml-2 text-black" />
           ) : null}
         </div>
 

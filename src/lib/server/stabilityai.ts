@@ -22,7 +22,7 @@ export interface ImageGenerationResponse {
 export async function generation(
   prompt: string
 ): Promise<ImageGenerationResponse> {
-  const engineId = 'stable-diffusion-v1-6';
+  const engineId = 'stable-diffusion-xl-1024-v1-0';
   const url = `${BASE_URL}/v1/generation/${engineId}/text-to-image`;
 
   const prompts = [
@@ -44,8 +44,8 @@ export async function generation(
     body: JSON.stringify({
       text_prompts: prompts,
       cfg_scale: 20,
-      height: 512,
-      width: 512,
+      height: 1024,
+      width: 1024,
       steps: 20,
       samples: 1,
     }),

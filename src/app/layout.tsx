@@ -1,3 +1,4 @@
+import { Footer } from '@/components/server/Footer';
 import type { Metadata } from 'next';
 import { Playfair_Display } from 'next/font/google';
 import './globals.css';
@@ -19,7 +20,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={playfairDisplay.className}>
-      <body>{children}</body>
+      <body>
+        <div className="">
+          {children}
+          <Footer />
+        </div>
+      </body>
     </html>
   );
 }
