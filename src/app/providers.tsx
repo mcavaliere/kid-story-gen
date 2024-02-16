@@ -8,6 +8,10 @@ if (typeof window !== 'undefined') {
     api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
     capture_pageview: false, // Disable automatic pageview capture, as we capture manually
   });
+
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    posthog.opt_out_capturing();
+  }
 }
 
 export function PHProvider({ children }: { children: React.ReactNode }) {
