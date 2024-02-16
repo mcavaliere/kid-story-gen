@@ -1,3 +1,5 @@
+import { negativePrompt } from '@/prompts/stabilityai/create-story-image';
+
 if (!process.env.STABILITY_API_KEY) {
   throw new Error(`STABILITY_API_KEY is required`);
 }
@@ -32,7 +34,7 @@ export async function generation(
     },
     // Negative prompt, to prevent the model from generating text.
     {
-      text: 'text',
+      text: negativePrompt,
       weight: -1,
     },
   ];

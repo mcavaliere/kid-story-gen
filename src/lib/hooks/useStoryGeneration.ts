@@ -9,8 +9,8 @@ export type UseStoryGenerationReturn = {
   complete: UseCompletionHelpers['complete'];
   completion: UseCompletionHelpers['completion'];
   previousCompletion: UseCompletionHelpers['completion'];
-  storyBody?: string[];
-  storyTitle?: string;
+  storyBody: string[];
+  storyTitle: string;
   storyContentIsLoading: boolean;
   storyGenerationComplete: boolean;
 };
@@ -28,7 +28,7 @@ export function useStoryGeneration(): UseStoryGenerationReturn {
       setStoryGenerationComplete(true);
     },
   });
-  const previousCompletion = usePreviousValue(completion);
+  const previousCompletion = usePreviousValue(completion) || '';
 
   // JSONified streaming chat response.
   // We track the last completion value as a fallback. If any error throws midway through streaming,
@@ -39,8 +39,8 @@ export function useStoryGeneration(): UseStoryGenerationReturn {
       ? parseCompletion({ completion: previousCompletion })
       : undefined,
   });
-  const storyBody = completionJson?.content?.split(/\n\n/);
-  const storyTitle = completionJson?.title;
+  const storyBody = completionJson?.content?.split(/\n\n/) || [];
+  const storyTitle = completionJson?.title || '';
 
   return {
     complete,
