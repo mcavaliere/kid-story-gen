@@ -1,7 +1,13 @@
 import { Footer } from '@/components/server/Footer';
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { Playfair_Display } from 'next/font/google';
 import './globals.css';
+import { PHProvider } from './providers';
+
+const PostHogPageView = dynamic(() => import('@/components/PostHogPageView'), {
+  ssr: false,
+});
 
 const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
@@ -20,12 +26,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={playfairDisplay.className}>
-      <body>
-        <div className="">
-          {children}
-          <Footer />
-        </div>
-      </body>
+      <PHProvider>
+        <body>
+          <PostHogPageView />
+          <div className="">
+            {children}
+            <Footer />
+          </div>
+        </body>
+      </PHProvider>
     </html>
   );
 }
