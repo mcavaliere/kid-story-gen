@@ -15,7 +15,7 @@ export default function Home() {
             alt="An open book adorned with stars and constellations."
             width={150}
             height={150}
-            className="mx-auto"
+            className="mx-auto rounded-lg"
           />
 
           <Heading

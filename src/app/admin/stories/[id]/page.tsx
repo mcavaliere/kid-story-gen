@@ -18,22 +18,31 @@ export default async function StoryDetailPage({
     throw new StoryNotFoundError();
   }
 
-  const { title, content, imageUrl } = story;
+  const { title, content: rawContent, imageUrl } = story;
+
+  const content = rawContent
+    .split(/\n\n/)
+    .map((p) => <p className="mb-2">{p}</p>);
 
   return (
-    <div className="flex flex-col items-center">
-      <Heading>{title}</Heading>
+    <div className="grid gap-10 place-items-start grid-cols-1 sm:grid-cols-2 content-start items-center p-2 sm:p-4">
+      <div className="h-full">
+        {!imageUrl ? null : (
+          <Image
+            src={imageUrl}
+            alt={`Cover image for story`}
+            width="512"
+            height="512"
+            className="rounded-xl"
+          />
+        )}
+      </div>
 
-      {!imageUrl ? null : (
-        <Image
-          src={imageUrl}
-          alt={`Cover image for story`}
-          width="512"
-          height="512"
-        />
-      )}
+      <div>
+        <Heading className="md:mb-4">{title}</Heading>
 
-      <div>{content}</div>
+        {content}
+      </div>
     </div>
   );
 }

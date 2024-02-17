@@ -73,6 +73,7 @@ export function StoryContextProvider({
     },
   });
 
+  // Derive list of topics from the selected age group.
   const currentAgeGroup = form.watch('ageGroup');
   const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
 
