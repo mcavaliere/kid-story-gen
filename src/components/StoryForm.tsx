@@ -5,10 +5,12 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Slider } from '@/components/ui/slider';
 import { useStoryContext } from '@/context/StoryContext';
-import { AGE_GROUPS } from '@/lib/constants';
+import { AGE_GROUPS, STORY_LENGTH_RANGE } from '@/lib/constants';
 import { StoryFormSchemaType } from '@/lib/storyFormSchema';
 import { cn } from '@/lib/utils';
 import { type UseFormReturn } from 'react-hook-form';
@@ -120,7 +122,7 @@ export function StoryForm({ form, className = '' }: StoryFormProps) {
           ) : null}
         </div>
 
-        {/* <div className="flex flex-col w-full justify-center items-center mt-4">
+        <div className="flex flex-col w-full justify-center items-center mt-4">
           <div className="flex flex-row w-full">
             <Heading size="h3" className="inline-block mx-auto text-center">
               Options
@@ -159,7 +161,7 @@ export function StoryForm({ form, className = '' }: StoryFormProps) {
               }}
             />
           </div>
-        </div> */}
+        </div>
 
         {/* <div className="flex flex-row justify-end">
 

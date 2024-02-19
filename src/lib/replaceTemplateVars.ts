@@ -9,7 +9,7 @@ export function replaceTemplateVars(
   let newString = template;
   Object.keys(vars).forEach((key) => {
     const re = `\{\{${key}\}\}`;
-    console.log(`---------------- regexp: `, re);
+
     newString = newString.replace(new RegExp(re, 'g'), vars[key]);
   });
   return newString;
