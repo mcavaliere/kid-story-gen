@@ -16,6 +16,7 @@ export default function Home() {
             width={150}
             height={150}
             className="mx-auto rounded-lg"
+            priority
           />
 
           <Heading
