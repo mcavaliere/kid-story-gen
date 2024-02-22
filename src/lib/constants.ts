@@ -137,6 +137,7 @@ export const AGE_GROUPS: AgeGroupData = [
       'Peer Relationships',
       'Personal Growth',
       'Self-Expression',
+      'Snow and mountains',
       'Transition',
     ],
   },

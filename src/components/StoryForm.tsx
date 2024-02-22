@@ -27,7 +27,9 @@ export type StoryFormProps = {
 };
 
 export function StoryForm({ form, className = '' }: StoryFormProps) {
-  const { onSubmit, storyContentIsLoading, themes } = useStoryContext()!;
+  const { onSubmit, storyContentIsLoading, imageIsGenerating, themes } =
+    useStoryContext()!;
+  const formIsDisabled = storyContentIsLoading || imageIsGenerating;
 
   return (
     <Form {...form}>
@@ -111,7 +113,11 @@ export function StoryForm({ form, className = '' }: StoryFormProps) {
             )}
           />
 
-          <Button type="submit" className="inline-block ml-2">
+          <Button
+            type="submit"
+            className="inline-block ml-2"
+            disabled={formIsDisabled}
+          >
             Make the story!
           </Button>
 
