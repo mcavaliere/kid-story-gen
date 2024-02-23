@@ -20,9 +20,11 @@ export default async function StoryDetailPage({
 
   const { title, content: rawContent, imageUrl } = story;
 
-  const content = rawContent
-    .split(/\n\n/)
-    .map((p) => <p className="mb-2">{p}</p>);
+  const content = rawContent.split(/\n\n/).map((p, i) => (
+    <p key={i} className="mb-2">
+      {p}
+    </p>
+  ));
 
   return (
     <div className="grid gap-10 place-items-start grid-cols-1 sm:grid-cols-2 content-start items-center p-2 sm:p-4">

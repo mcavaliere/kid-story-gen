@@ -14,6 +14,7 @@ import { useStoryGeneration } from '@/lib/hooks/useStoryGeneration';
 
 import { createStory } from '@/lib/client/api';
 import { useStoryImageGeneration } from '@/lib/hooks/useStoryImageGeneration';
+import { useStoryReducer } from '@/state/storyReducer';
 import { useEffect, useState } from 'react';
 import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
 
@@ -51,6 +52,7 @@ export function StoryContextProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const [state, dispatch] = useStoryReducer();
   const [storySaved, setStorySaved] = useState<boolean>(false);
 
   const {
