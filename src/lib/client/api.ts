@@ -14,9 +14,15 @@ export async function generateStory(params: StoryFormSchemaType) {
 }
 
 export async function createStory(params: Prisma.StoryCreateInput) {
-  return await fetch('/api/stories/create', {
+  const response = await fetch('/api/stories/create', {
     method: 'POST',
     body: JSON.stringify(params),
     headers,
   });
+
+  const json = await response.json();
+
+  if (!response.ok) throw new Error(response.statusText);
+
+  return json;
 }

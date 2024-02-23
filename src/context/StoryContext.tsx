@@ -12,8 +12,8 @@ import { ImageGenerationResponse } from '@/app/actions';
 import { AGE_GROUPS } from '@/lib/constants';
 import { useStoryGeneration } from '@/lib/hooks/useStoryGeneration';
 
+import { createStory } from '@/lib/client/api';
 import { useStoryImageGeneration } from '@/lib/hooks/useStoryImageGeneration';
-import { Prisma } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
 
@@ -93,18 +93,7 @@ export function StoryContextProvider({
   // For saving the story when generation is complete.
   const { isPending: isCreatingStory, mutateAsync: mutateCreateStory } =
     useMutation({
-      mutationFn: async (data: Prisma.StoryCreateInput) => {
-        const response = await fetch('/api/stories/create', {
-          method: 'POST',
-          body: JSON.stringify(data),
-        });
-
-        const json = await response.json();
-
-        if (!response.ok) throw new Error(response.statusText);
-
-        return json;
-      },
+      mutationFn: createStory,
     });
 
   useEffect(() => {
