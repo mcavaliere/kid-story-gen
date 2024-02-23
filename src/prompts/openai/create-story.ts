@@ -17,7 +17,7 @@ Output the story as a JSON object, using the following template. Output will con
 
 - title: The title of the story.
 - synopsis: A one sentence description of the story.
-- characters: The names of the characters in the story.
+- characters: The names of the characters in the story in a comma-separated list.
 - characterDescriptions: A visual description of each of the characters.
 - content: The content of the story. Separate each paragraph with two newlines.
 - setting: The setting for the cover image of the story. Includes environment, weather, the main characters, and an activity they are engaged in.
