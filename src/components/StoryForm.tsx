@@ -56,11 +56,14 @@ export function StoryForm({ form, className = '' }: StoryFormProps) {
             name="ageGroup"
             render={({ field }) => {
               return (
-                <FormItem className="inline-block relative w-[180px]">
+                <FormItem className="inline-block relative w-[180px] min-w-60">
                   <FormControl>
                     <Select onValueChange={field.onChange}>
-                      <SelectTrigger className="w-full text-lg">
-                        <SelectValue placeholder="Age Group" />
+                      <SelectTrigger className="w-full text-lg text-left">
+                        <SelectValue
+                          placeholder="Age Group"
+                          className="bg-green-200"
+                        />
                       </SelectTrigger>
                       <SelectContent>
                         {AGE_GROUPS.map(({ name }) => (
@@ -89,10 +92,10 @@ export function StoryForm({ form, className = '' }: StoryFormProps) {
             control={form.control}
             name="topic"
             render={({ field }) => (
-              <FormItem className="inline-block relative w-[180px]">
+              <FormItem className="inline-block relative w-[180px] min-w-60">
                 <FormControl>
                   <Select onValueChange={field.onChange}>
-                    <SelectTrigger className="w-full text-lg">
+                    <SelectTrigger className="w-full text-lg text-left">
                       <SelectValue placeholder="Topic" />
                     </SelectTrigger>
                     <SelectContent>
