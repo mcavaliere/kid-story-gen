@@ -4,41 +4,22 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 
 import { createContext, useContext } from 'react';
-import { UseFormReturn, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import * as z from 'zod';
 
-import { ImageGenerationResponse } from '@/app/actions';
 import { AGE_GROUPS } from '@/lib/constants';
 import { useStoryGeneration } from '@/lib/hooks/useStoryGeneration';
 
 import { createStory } from '@/lib/client/api';
 import { useStoryImageGeneration } from '@/lib/hooks/useStoryImageGeneration';
-import { useStoryReducer } from '@/state/storyReducer';
+import {
+  StoryContextType,
+  defaultStoryContext,
+  useStoryReducer,
+} from '@/state/storyReducer';
 import { useEffect, useState } from 'react';
 import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
-
-export type StoryContextType = {
-  form?: UseFormReturn<z.infer<typeof storyFormSchema>>;
-  imageGenResponse?: ImageGenerationResponse;
-  imageIsGenerating: boolean;
-  imagePath?: string;
-  completion?: string;
-  completionJson?: Record<string, unknown | any>;
-  storyBody: string[];
-  storyTitle: string;
-  storyContentIsLoading: boolean;
-  onSubmit: (values: StoryFormSchemaType) => Promise<void>;
-  themes?: string[];
-};
-
-export const defaultStoryContext: StoryContextType = {
-  imageIsGenerating: false,
-  storyContentIsLoading: false,
-  storyBody: [],
-  storyTitle: '',
-  onSubmit: async (values) => Promise.resolve(void 0),
-};
 
 export const StoryContext =
   createContext<StoryContextType>(defaultStoryContext);

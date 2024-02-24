@@ -1,5 +1,29 @@
-import { StoryContextType, defaultStoryContext } from '@/context/StoryContext';
+import { ImageGenerationResponse } from '@/lib/server/stabilityai';
+import { StoryFormSchemaType, storyFormSchema } from '@/lib/storyFormSchema';
 import { useReducer } from 'react';
+import { UseFormReturn } from 'react-hook-form';
+
+export type StoryContextType = {
+  form?: UseFormReturn<z.infer<typeof storyFormSchema>>;
+  imageGenResponse?: ImageGenerationResponse;
+  imageIsGenerating: boolean;
+  imagePath?: string;
+  completion?: string;
+  completionJson?: Record<string, unknown | any>;
+  storyBody: string[];
+  storyTitle: string;
+  storyContentIsLoading: boolean;
+  onSubmit: (values: StoryFormSchemaType) => Promise<void>;
+  themes?: string[];
+};
+
+export const defaultStoryContext: StoryContextType = {
+  imageIsGenerating: false,
+  storyContentIsLoading: false,
+  storyBody: [],
+  storyTitle: '',
+  onSubmit: async (values) => Promise.resolve(void 0),
+};
 
 export type StoryAction =
   // User interactions
