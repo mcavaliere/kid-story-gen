@@ -14,6 +14,7 @@ import { useStoryGeneration } from '@/lib/hooks/useStoryGeneration';
 import { createStory } from '@/lib/client/api';
 import { useStoryImageGeneration } from '@/lib/hooks/useStoryImageGeneration';
 import {
+  StoryAction,
   StoryContextType,
   defaultStoryContext,
   useStoryReducer,
@@ -23,6 +24,10 @@ import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
 
 export const StoryContext =
   createContext<StoryContextType>(defaultStoryContext);
+
+export const StoryDispatchContext = createContext<
+  React.Dispatch<StoryAction> | undefined
+>(undefined);
 
 export function useStoryContext() {
   return useContext(StoryContext);
@@ -123,7 +128,9 @@ export function StoryContextProvider({
         themes,
       }}
     >
-      {children}
+      <StoryDispatchContext.Provider value={dispatch}>
+        {children}
+      </StoryDispatchContext.Provider>
     </StoryContext.Provider>
   );
 }

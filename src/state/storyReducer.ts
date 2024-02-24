@@ -2,7 +2,7 @@ import { ImageGenerationResponse } from '@/lib/server/stabilityai';
 import { StoryFormSchemaType, storyFormSchema } from '@/lib/storyFormSchema';
 import { useReducer } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-
+import * as z from 'zod';
 export type StoryContextType = {
   form?: UseFormReturn<z.infer<typeof storyFormSchema>>;
   imageGenResponse?: ImageGenerationResponse;
