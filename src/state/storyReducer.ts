@@ -47,6 +47,29 @@ export const initialState = defaultStoryContext;
 
 export type StoryState = StoryContextType;
 
+export function extractStoryContent(
+  state: StoryState,
+  action: StoryAction & { completion: string }
+) {
+  // JSONified streaming chat response.
+  // We track the last completion value as a fallback. If any error throws midway through streaming,
+  //  we can use the last completion value to display the story briefly and prevent flicker from the story going blank.
+  const completionJson = parseCompletion({
+    completion: action.completion,
+    fallback: state.previousCompletion
+      ? parseCompletion({ completion: state.previousCompletion })
+      : undefined,
+  });
+  const storyBody = completionJson?.content?.split(/\n\n/) || [];
+  const storyTitle = completionJson?.title || '';
+
+  return {
+    completionJson,
+    storyBody,
+    storyTitle,
+  };
+}
+
 export function storyReducer(
   state: StoryState = initialState,
   action: StoryAction
@@ -60,14 +83,11 @@ export function storyReducer(
         storyGenerationComplete: false,
       };
     case 'STORY_GENERATION_PROGRESS': {
-      const completionJson = parseCompletion({
-        completion: action.completion,
-        fallback: state.previousCompletion
-          ? parseCompletion({ completion: state.previousCompletion })
-          : undefined,
-      });
-      const storyBody = completionJson?.content?.split(/\n\n/) || [];
-      const storyTitle = completionJson?.title || '';
+      const { completionJson, storyBody, storyTitle } = extractStoryContent(
+        state,
+        action
+      );
+
       return {
         ...state,
         completion: action.completion,
@@ -77,17 +97,10 @@ export function storyReducer(
       };
     }
     case 'STORY_GENERATION_COMPLETE': {
-      // JSONified streaming chat response.
-      // We track the last completion value as a fallback. If any error throws midway through streaming,
-      //  we can use the last completion value to display the story briefly and prevent flicker from the story going blank.
-      const completionJson = parseCompletion({
-        completion: action.completion,
-        fallback: state.previousCompletion
-          ? parseCompletion({ completion: state.previousCompletion })
-          : undefined,
-      });
-      const storyBody = completionJson?.content?.split(/\n\n/) || [];
-      const storyTitle = completionJson?.title || '';
+      const { completionJson, storyBody, storyTitle } = extractStoryContent(
+        state,
+        action
+      );
       return {
         ...state,
         previousCompletion: state.completion,
