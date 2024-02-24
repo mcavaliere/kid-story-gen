@@ -14,6 +14,7 @@ export type UseStoryGenerationReturn = {
   storyContentIsLoading: boolean;
   storyGenerationComplete: boolean;
 };
+
 export function useStoryGeneration(): UseStoryGenerationReturn {
   const [storyGenerationComplete, setStoryGenerationComplete] =
     useState<boolean>(false);

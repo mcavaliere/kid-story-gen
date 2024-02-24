@@ -3,23 +3,22 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect, useReducer } from 'react';
 import { useForm } from 'react-hook-form';
 
 import * as z from 'zod';
 
 import { AGE_GROUPS } from '@/lib/constants';
-import { useStoryGeneration } from '@/lib/hooks/useStoryGeneration';
 
 import { createStory } from '@/lib/client/api';
-import { useStoryImageGeneration } from '@/lib/hooks/useStoryImageGeneration';
 import {
   StoryAction,
   StoryContextType,
   defaultStoryContext,
-  useStoryReducer,
+  storyReducer,
 } from '@/state/storyReducer';
-import { useEffect, useState } from 'react';
+import { useCompletion } from 'ai/react';
+import { useState } from 'react';
 import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
 
 export const StoryContext =
@@ -38,18 +37,36 @@ export function StoryContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [state, dispatch] = useStoryReducer();
+  const [state, dispatch] = useReducer(storyReducer, defaultStoryContext);
   const [storySaved, setStorySaved] = useState<boolean>(false);
 
   const {
-    complete,
     completion,
-    completionJson,
-    storyTitle,
-    storyBody,
-    storyContentIsLoading,
-    storyGenerationComplete,
-  } = useStoryGeneration();
+    isLoading: storyContentIsLoading,
+    complete,
+  } = useCompletion({
+    api: '/api/stories/generate',
+    onFinish: async (_prompt, completion) => {
+      dispatch({ type: 'STORY_GENERATION_COMPLETE', completion });
+    },
+  });
+
+  useEffect(() => {
+    console.log(`useEffect`);
+    if (completion) {
+      dispatch({ type: 'STORY_GENERATION_PROGRESS', completion });
+    }
+  }, [completion]);
+
+  // const {
+  //   complete,
+  //   completion,
+  //   completionJson,
+  //   storyTitle,
+  //   storyBody,
+  //   storyContentIsLoading,
+  //   storyGenerationComplete,
+  // } = useStoryGeneration();
 
   const form = useForm<z.infer<typeof storyFormSchema>>({
     resolver: zodResolver(storyFormSchema),
@@ -65,16 +82,17 @@ export function StoryContextProvider({
   const currentAgeGroup = form.watch('ageGroup');
   const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
 
-  const { imageGenResponse, imageIsGenerating, setImageGenResponse } =
-    useStoryImageGeneration({
-      completionJson,
-    });
+  // const { imageGenResponse, imageIsGenerating, setImageGenResponse } =
+  //   useStoryImageGeneration({
+  //     completionJson,
+  //   });
 
-  const imagePath = imageGenResponse?.url;
+  // const imagePath = imageGenResponse?.url;
 
   async function onSubmit(values: StoryFormSchemaType) {
     // Reset this so we can generate a new image.
-    setImageGenResponse(undefined);
+    // setImageGenResponse(undefined);
+    dispatch({ type: 'STORY_GENERATION_STARTED' });
     await complete(JSON.stringify(form.getValues()));
   }
 
@@ -84,46 +102,49 @@ export function StoryContextProvider({
       mutationFn: createStory,
     });
 
-  useEffect(() => {
-    if (
-      storyGenerationComplete &&
-      !storyContentIsLoading &&
-      imageGenResponse &&
-      !imageIsGenerating &&
-      !isCreatingStory &&
-      !storySaved
-    ) {
-      console.log(`story generation complete, saving story`);
-      mutateCreateStory({
-        ...completionJson,
-        imageUrl: imageGenResponse.url,
-      }).then(() => {
-        setStorySaved(true);
-      });
-    }
-  }, [
-    completionJson,
-    imageGenResponse,
-    imageIsGenerating,
-    isCreatingStory,
-    mutateCreateStory,
-    storyContentIsLoading,
-    storyGenerationComplete,
-    storySaved,
-  ]);
+  // useEffect(() => {
+  //   if (
+  //     storyGenerationComplete &&
+  //     !storyContentIsLoading &&
+  //     imageGenResponse &&
+  //     !imageIsGenerating &&
+  //     !isCreatingStory &&
+  //     !storySaved
+  //   ) {
+  //     console.log(`story generation complete, saving story`);
+  //     mutateCreateStory({
+  //       ...completionJson,
+  //       imageUrl: imageGenResponse.url,
+  //     }).then(() => {
+  //       setStorySaved(true);
+  //     });
+  //   }
+  // }, [
+  //   completionJson,
+  //   imageGenResponse,
+  //   imageIsGenerating,
+  //   isCreatingStory,
+  //   mutateCreateStory,
+  //   storyContentIsLoading,
+  //   storyGenerationComplete,
+  //   storySaved,
+  // ]);
+
+  console.log(`---------------- state.completion: `, state.completion);
 
   return (
     <StoryContext.Provider
       value={{
-        completion,
-        completionJson,
+        ...state,
+        // completion,
+        // completionJson,
         form,
-        imagePath,
-        imageGenResponse,
-        imageIsGenerating,
+        // imagePath,
+        // imageGenResponse,
+        // imageIsGenerating,
         storyContentIsLoading,
-        storyBody,
-        storyTitle,
+        // storyBody,
+        // storyTitle,
         onSubmit,
         themes,
       }}

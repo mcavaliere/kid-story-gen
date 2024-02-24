@@ -29,6 +29,7 @@ export type StoryFormProps = {
 export function StoryForm({ form, className = '' }: StoryFormProps) {
   const { onSubmit, storyContentIsLoading, imageIsGenerating, themes } =
     useStoryContext()!;
+
   const formIsDisabled = storyContentIsLoading || imageIsGenerating;
 
   return (
