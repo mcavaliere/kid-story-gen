@@ -21,7 +21,7 @@ export default async function StoryDetailPage({
   const { title, content: rawContent, imageUrl } = story;
 
   const content = rawContent.split(/\n\n/).map((p, i) => (
-    <p key={i} className="mb-2">
+    <p className="mb-2" key={i}>
       {p}
     </p>
   ));
