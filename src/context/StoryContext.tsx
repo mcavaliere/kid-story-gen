@@ -11,6 +11,7 @@ import * as z from 'zod';
 import { AGE_GROUPS } from '@/lib/constants';
 
 import { createStory } from '@/lib/client/api';
+import { useStoryImageGeneration } from '@/lib/hooks/useStoryImageGeneration';
 import {
   StoryAction,
   StoryContextType,
@@ -32,12 +33,23 @@ export function useStoryContext() {
   return useContext(StoryContext);
 }
 
+export function useStoryDispatch() {
+  const dispatch = useContext(StoryDispatchContext);
+  if (!dispatch) {
+    throw new Error(
+      'useStoryDispatch must be used within a StoryContextProvider'
+    );
+  }
+  return dispatch;
+}
+
 export function StoryContextProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const [state, dispatch] = useReducer(storyReducer, defaultStoryContext);
+
   const [storySaved, setStorySaved] = useState<boolean>(false);
 
   const {
@@ -82,10 +94,7 @@ export function StoryContextProvider({
   const currentAgeGroup = form.watch('ageGroup');
   const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
 
-  // const { imageGenResponse, imageIsGenerating, setImageGenResponse } =
-  //   useStoryImageGeneration({
-  //     completionJson,
-  //   });
+  useStoryImageGeneration();
 
   // const imagePath = imageGenResponse?.url;
 
@@ -129,8 +138,6 @@ export function StoryContextProvider({
   //   storyGenerationComplete,
   //   storySaved,
   // ]);
-
-  console.log(`---------------- state.completion: `, state.completion);
 
   return (
     <StoryContext.Provider

@@ -6,11 +6,14 @@ import * as z from 'zod';
 export type StoryContextType = {
   form?: UseFormReturn<z.infer<typeof storyFormSchema>>;
   imageGenResponse?: ImageGenerationResponse;
+  imageGenerationError?: any;
   imageIsGenerating: boolean;
   imagePath?: string;
   completion?: string;
   completionJson?: Record<string, unknown | any>;
   previousCompletion?: string;
+  setting?: string;
+  characterDescriptions?: string;
   storyBody: string[];
   storyTitle: string;
   storyContentIsLoading: boolean;
@@ -40,8 +43,8 @@ export type StoryAction =
   | { type: 'STORY_GENERATION_STARTED' }
   | { type: 'STORY_GENERATION_PROGRESS'; completion: string }
   | { type: 'IMAGE_GENERATION_STARTED' }
-  | { type: 'IMAGE_GENERATION_COMPLETE' }
-  | { type: 'IMAGE_GENERATION_ERROR' };
+  | { type: 'IMAGE_GENERATION_COMPLETE'; response: ImageGenerationResponse }
+  | { type: 'IMAGE_GENERATION_ERROR'; error: any };
 
 export const initialState = defaultStoryContext;
 
@@ -62,11 +65,15 @@ export function extractStoryContent(
   });
   const storyBody = completionJson?.content?.split(/\n\n/) || [];
   const storyTitle = completionJson?.title || '';
+  const setting = completionJson?.setting;
+  const characterDescriptions = completionJson?.characterDescriptions;
 
   return {
     completionJson,
     storyBody,
     storyTitle,
+    setting,
+    characterDescriptions,
   };
 }
 
@@ -82,6 +89,7 @@ export function storyReducer(
         storyContentIsLoading: true,
         storyGenerationComplete: false,
       };
+
     case 'STORY_GENERATION_PROGRESS': {
       const { completionJson, storyBody, storyTitle } = extractStoryContent(
         state,
@@ -96,6 +104,7 @@ export function storyReducer(
         storyTitle,
       };
     }
+
     case 'STORY_GENERATION_COMPLETE': {
       const { completionJson, storyBody, storyTitle } = extractStoryContent(
         state,
@@ -112,6 +121,27 @@ export function storyReducer(
         storyTitle,
       };
     }
+
+    case 'IMAGE_GENERATION_STARTED':
+      return {
+        ...state,
+        imageIsGenerating: true,
+      };
+
+    case 'IMAGE_GENERATION_COMPLETE':
+      return {
+        ...state,
+        imageIsGenerating: false,
+        imageGenResponse: action.response,
+      };
+
+    case 'IMAGE_GENERATION_ERROR':
+      return {
+        ...state,
+        imageIsGenerating: false,
+        imageGenerationError: action.error,
+      };
+
     default:
       return state;
   }

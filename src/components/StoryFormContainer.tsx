@@ -1,7 +1,6 @@
 'use client';
 
 import { StoryForm } from '@/components/StoryForm';
-
 import { useStoryContext } from '@/context/StoryContext';
 import { StoryDisplay } from './StoryDisplay';
 import { StoryImage } from './StoryImage';

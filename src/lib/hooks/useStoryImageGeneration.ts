@@ -1,6 +1,7 @@
 import { ImageGenerationResponse, createImage } from '@/app/actions';
+import { useStoryContext, useStoryDispatch } from '@/context/StoryContext';
 import { StoryCompletionJson } from '@/types';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export type UseStoryImageGenerationReturn = {
   imageGenResponse?: ImageGenerationResponse;
@@ -11,41 +12,46 @@ export type UseStoryImageGenerationParams = {
   completionJson: StoryCompletionJson;
 };
 
-export function useStoryImageGeneration({
-  completionJson,
-}: UseStoryImageGenerationParams) {
+export function useStoryImageGeneration() {
   // Generate an image for the story title one time, once the title exists.
   // For image generation
-  const [imageGenResponse, setImageGenResponse] = useState<
-    ImageGenerationResponse | undefined
-  >(undefined);
-  const [imageIsGenerating, setImageIsGenerating] = useState<boolean>(false);
+
+  const {
+    setting,
+    characterDescriptions,
+    imageGenResponse,
+    imageIsGenerating,
+    completionJson,
+  } = useStoryContext();
+
+  const dispatch = useStoryDispatch()!;
 
   useEffect(() => {
     if (
-      completionJson?.setting &&
-      completionJson?.characterDescriptions &&
+      completionJson &&
+      setting &&
+      characterDescriptions &&
       !imageGenResponse &&
       !imageIsGenerating
     ) {
-      setImageIsGenerating(true);
+      dispatch({ type: 'IMAGE_GENERATION_STARTED' });
       createImage({
         setting: completionJson.setting,
         characterDescriptions: completionJson.characterDescriptions,
       })
         .then((image) => {
-          setImageGenResponse(image);
-          setImageIsGenerating(false);
+          dispatch({ type: 'IMAGE_GENERATION_COMPLETE', response: image });
         })
         .catch((err) => {
+          dispatch({ type: 'IMAGE_GENERATION_ERROR', error: err });
           console.warn(`---------------- error creating image: `, err);
         });
     }
-  }, [completionJson, imageGenResponse, imageIsGenerating]);
-
-  return {
-    setImageGenResponse,
+  }, [
+    completionJson,
     imageGenResponse,
     imageIsGenerating,
-  };
+    setting,
+    characterDescriptions,
+  ]);
 }
