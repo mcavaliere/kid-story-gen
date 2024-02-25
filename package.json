@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "ts": "tsc --noEmit",
+    "ts:watch": "tsc --noEmit --watch"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
