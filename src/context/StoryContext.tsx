@@ -87,10 +87,6 @@ export function StoryContextProvider({
   const currentAgeGroup = form.watch('ageGroup');
   const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
 
-  // useStoryImageGeneration();
-
-  // const imagePath = imageGenResponse?.url;
-
   async function onSubmit(values: StoryFormSchemaType) {
     // Reset this so we can generate a new image.
     // setImageGenResponse(undefined);

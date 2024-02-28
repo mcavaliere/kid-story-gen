@@ -1,13 +1,12 @@
 import { CreateImageResponse } from '@/app/actions';
 import { parseCompletion } from '@/lib/parseCompletion';
-import { ImageGenerationResponse } from '@/lib/server/stabilityai';
 import { StoryFormSchemaType, storyFormSchema } from '@/lib/storyFormSchema';
 import { UseFormReturn } from 'react-hook-form';
 import { EffectReducerExec } from 'use-effect-reducer';
 import * as z from 'zod';
 export type StoryContextType = {
   form?: UseFormReturn<z.infer<typeof storyFormSchema>>;
-  imageGenResponse?: ImageGenerationResponse;
+  imageGenResponse?: CreateImageResponse;
   imageGenerationError?: any;
   imageIsGenerating: boolean;
   imagePath?: string;
@@ -124,7 +123,7 @@ export function storyReducer(
         !imageGenResponse &&
         !imageIsGenerating
       ) {
-        exec({ type: 'generateImage' });
+        exec({ type: 'generateImage', characterDescriptions, setting });
       }
 
       return {
@@ -154,19 +153,23 @@ export function storyReducer(
     }
 
     case 'IMAGE_GENERATION_STARTED':
+      console.log(`IMAGE_GENERATION_STARTED`);
       return {
         ...state,
         imageIsGenerating: true,
       };
 
     case 'IMAGE_GENERATION_COMPLETE':
+      console.log(`IMAGE_GENERATION_COMPLETe:`, action.response);
       return {
         ...state,
         imageIsGenerating: false,
         imageGenResponse: action.response,
+        imagePath: action.response.url,
       };
 
     case 'IMAGE_GENERATION_ERROR':
+      console.log(`IMAGE_GENERATION_ERROR`, action.error);
       return {
         ...state,
         imageIsGenerating: false,
