@@ -39,6 +39,13 @@ export type StoryAction =
   // User interactions
   | { type: 'SUBMIT_CLICKED' }
 
+  // Commands that trigger state changes & effects
+  | {
+      type: 'GENERATE_STORY_IMAGE';
+      characterDescriptions: string;
+      setting: string;
+    }
+
   // State changes
   | { type: 'STORY_GENERATION_COMPLETE'; completion: string }
   | { type: 'STORY_GENERATION_STARTED' }
@@ -83,7 +90,6 @@ export function storyReducer(
   action: StoryAction,
   exec: EffectReducerExec<StoryState, StoryAction, any>
 ): StoryState {
-  // console.log(`reducer: ${action.type}`);
   switch (action.type) {
     case 'STORY_GENERATION_STARTED':
       return {
@@ -117,7 +123,6 @@ export function storyReducer(
         !imageGenResponse &&
         !imageIsGenerating
       ) {
-        // console.log(`---------------- EXECUTING generateImage effect`);
         exec({ type: 'generateImage' });
       }
 
