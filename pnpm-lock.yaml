@@ -80,6 +80,9 @@ dependencies:
   tailwindcss-animate:
     specifier: ^1.0.7
     version: 1.0.7(tailwindcss@3.4.1)
+  use-effect-reducer:
+    specifier: ^0.7.0
+    version: 0.7.0(react@18.2.0)
   zod:
     specifier: ^3.22.4
     version: 3.22.4
@@ -6509,6 +6512,15 @@ packages:
       '@types/react': 18.2.56
       react: 18.2.0
       tslib: 2.6.2
+    dev: false
+
+  /use-effect-reducer@0.7.0(react@18.2.0):
+    resolution: {integrity: sha512-TinyyjN4AdKztczq0nG0GuGPWwOLjUw29qWEOSxv/YDc954EbVNFbobQQwnzSAhM4xpE/2zt5rw0t/EZjJ0HSA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /use-sidecar@1.1.2(@types/react@18.2.56)(react@18.2.0):

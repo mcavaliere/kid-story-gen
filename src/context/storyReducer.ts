@@ -2,6 +2,7 @@ import { parseCompletion } from '@/lib/parseCompletion';
 import { ImageGenerationResponse } from '@/lib/server/stabilityai';
 import { StoryFormSchemaType, storyFormSchema } from '@/lib/storyFormSchema';
 import { UseFormReturn } from 'react-hook-form';
+import { EffectReducerExec } from 'use-effect-reducer';
 import * as z from 'zod';
 export type StoryContextType = {
   form?: UseFormReturn<z.infer<typeof storyFormSchema>>;
@@ -79,9 +80,10 @@ export function extractStoryContent(
 
 export function storyReducer(
   state: StoryState = initialState,
-  action: StoryAction
+  action: StoryAction,
+  exec: EffectReducerExec<StoryState, StoryAction, any>
 ): StoryState {
-  console.log(`reducer: ${action.type}`);
+  // console.log(`reducer: ${action.type}`);
   switch (action.type) {
     case 'STORY_GENERATION_STARTED':
       return {
@@ -91,10 +93,33 @@ export function storyReducer(
       };
 
     case 'STORY_GENERATION_PROGRESS': {
-      const { completionJson, storyBody, storyTitle } = extractStoryContent(
-        state,
-        action
-      );
+      const { imageGenResponse, imageIsGenerating } = state;
+      const {
+        completionJson,
+        storyBody,
+        storyTitle,
+        setting,
+        characterDescriptions,
+      } = extractStoryContent(state, action);
+
+      // console.log(
+      //   { completionJson },
+      //   { setting },
+      //   { characterDescriptions },
+      //   { imageGenResponse },
+      //   { imageIsGenerating }
+      // );
+
+      if (
+        completionJson &&
+        setting &&
+        characterDescriptions &&
+        !imageGenResponse &&
+        !imageIsGenerating
+      ) {
+        // console.log(`---------------- EXECUTING generateImage effect`);
+        exec({ type: 'generateImage' });
+      }
 
       return {
         ...state,

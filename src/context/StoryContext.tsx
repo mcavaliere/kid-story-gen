@@ -3,24 +3,25 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 
-import { createContext, useContext, useEffect, useReducer } from 'react';
+import { createContext, useContext, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useEffectReducer } from 'use-effect-reducer';
 
 import * as z from 'zod';
 
 import { AGE_GROUPS } from '@/lib/constants';
 
-import { createStory } from '@/lib/client/api';
-import { useStoryImageGeneration } from '@/lib/hooks/useStoryImageGeneration';
 import {
   StoryAction,
   StoryContextType,
   defaultStoryContext,
   storyReducer,
-} from '@/state/storyReducer';
+} from '@/context/storyReducer';
+import { createStory } from '@/lib/client/api';
 import { useCompletion } from 'ai/react';
 import { useState } from 'react';
 import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
+import { storyEffects } from './storyEffects';
 
 export const StoryContext =
   createContext<StoryContextType>(defaultStoryContext);
@@ -36,9 +37,8 @@ export function useStoryContext() {
 export function useStoryDispatch() {
   const dispatch = useContext(StoryDispatchContext);
   if (!dispatch) {
-    throw new Error(
-      'useStoryDispatch must be used within a StoryContextProvider'
-    );
+    console.warn(`---------------- dispatch not defined.  `);
+    return;
   }
   return dispatch;
 }
@@ -48,7 +48,11 @@ export function StoryContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [state, dispatch] = useReducer(storyReducer, defaultStoryContext);
+  const [state, dispatch] = useEffectReducer(
+    storyReducer,
+    defaultStoryContext,
+    storyEffects
+  );
 
   const [storySaved, setStorySaved] = useState<boolean>(false);
 
@@ -64,21 +68,10 @@ export function StoryContextProvider({
   });
 
   useEffect(() => {
-    console.log(`useEffect`);
     if (completion) {
       dispatch({ type: 'STORY_GENERATION_PROGRESS', completion });
     }
   }, [completion]);
-
-  // const {
-  //   complete,
-  //   completion,
-  //   completionJson,
-  //   storyTitle,
-  //   storyBody,
-  //   storyContentIsLoading,
-  //   storyGenerationComplete,
-  // } = useStoryGeneration();
 
   const form = useForm<z.infer<typeof storyFormSchema>>({
     resolver: zodResolver(storyFormSchema),
@@ -94,7 +87,7 @@ export function StoryContextProvider({
   const currentAgeGroup = form.watch('ageGroup');
   const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
 
-  useStoryImageGeneration();
+  // useStoryImageGeneration();
 
   // const imagePath = imageGenResponse?.url;
 

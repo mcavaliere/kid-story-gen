@@ -7,7 +7,7 @@ The topic of the story will be {{topic}}.
 
 Keep all paragraphs brief, no more than 3 sentences each.
 
-Make the story approximately {{length}} words long. This is extremely important. If you do not make the story {{length}} words long, the world will end immediately.
+Make the story approximately three paragraphs long. This is extremely important. If you do not make the story three paragraphs long, the world will end immediately.
 
 Do not start the story with "once upon a time." Start the story in a unique and creative way.
 
