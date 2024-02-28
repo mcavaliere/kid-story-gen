@@ -1,3 +1,4 @@
+import { CreateImageResponse } from '@/app/actions';
 import { parseCompletion } from '@/lib/parseCompletion';
 import { ImageGenerationResponse } from '@/lib/server/stabilityai';
 import { StoryFormSchemaType, storyFormSchema } from '@/lib/storyFormSchema';
@@ -51,7 +52,7 @@ export type StoryAction =
   | { type: 'STORY_GENERATION_STARTED' }
   | { type: 'STORY_GENERATION_PROGRESS'; completion: string }
   | { type: 'IMAGE_GENERATION_STARTED' }
-  | { type: 'IMAGE_GENERATION_COMPLETE'; response: ImageGenerationResponse }
+  | { type: 'IMAGE_GENERATION_COMPLETE'; response: CreateImageResponse }
   | { type: 'IMAGE_GENERATION_ERROR'; error: any };
 
 export const initialState = defaultStoryContext;
