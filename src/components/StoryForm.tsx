@@ -26,7 +26,7 @@ export type StoryFormProps = {
   className?: string;
 };
 
-export function StoryForm({ form, className = '' }: StoryFormProps) {
+export function StoryForm({ form }: StoryFormProps) {
   const { onSubmit, storyContentIsLoading, imageIsGenerating, themes } =
     useStoryContext()!;
 

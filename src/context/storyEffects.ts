@@ -37,7 +37,7 @@ export const saveStoryToDB: StoryEffectFunction = (state, effect, dispatch) => {
   dispatch({ type: 'STORY_SAVE_STARTED' });
   mutateCreateStory({
     ...completionJson,
-    imageUrl: imageGenResponse.url,
+    imageUrl: imageGenResponse?.url,
   })
     .then((story: any) => {
       dispatch({ type: 'STORY_SAVE_COMPLETE', story });

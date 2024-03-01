@@ -7,40 +7,45 @@ import { UseFormReturn } from 'react-hook-form';
 import { EffectReducerExec } from 'use-effect-reducer';
 import * as z from 'zod';
 export type StoryContextType = {
-  form?: UseFormReturn<z.infer<typeof storyFormSchema>>;
-  imageGenResponse?: CreateImageResponse;
-  imageGenerationError?: any;
-  imageIsGenerating: boolean;
-  imagePath?: string;
+  characterDescriptions?: string;
   completion?: string;
   completionJson?: Record<string, unknown | any>;
-  previousCompletion?: string;
-  setting?: string;
-  characterDescriptions?: string;
-  storyBody: string[];
-  storyTitle: string;
-  storyContentIsLoading: boolean;
-  storyGenerationComplete: boolean;
-  onSubmit: (values: StoryFormSchemaType) => Promise<void>;
+  form?: UseFormReturn<z.infer<typeof storyFormSchema>>;
+  imageGenerationError?: any;
+  imageGenResponse?: CreateImageResponse;
+  imageIsGenerating: boolean;
+  imagePath?: string;
   mutateCreateStory?: UseMutateAsyncFunction<
     any,
     Error,
     Prisma.StoryCreateInput,
     unknown
   >;
+  onSubmit: (values: StoryFormSchemaType) => Promise<void>;
+  previousCompletion?: string;
+  setting?: string;
+  storyBody: string[];
+  storyContentIsLoading: boolean;
+  storyTitle: string;
   themes?: string[];
 };
 
+// Initial context state. Note that this is also used to partially reset the state when submitting the form,
+//  to remove any previous story content.
 export const defaultStoryContext: StoryContextType = {
+  characterDescriptions: undefined,
   completion: undefined,
   completionJson: undefined,
-  previousCompletion: undefined,
+  imageGenerationError: undefined,
+  imageGenResponse: undefined,
   imageIsGenerating: false,
-  storyContentIsLoading: false,
-  storyGenerationComplete: false,
-  storyBody: [],
-  storyTitle: '',
+  imagePath: undefined,
   onSubmit: async (values) => Promise.resolve(void 0),
+  previousCompletion: undefined,
+  setting: undefined,
+  storyBody: [],
+  storyContentIsLoading: false,
+  storyTitle: '',
 };
 
 export type StoryAction =
@@ -57,6 +62,7 @@ export type StoryAction =
       type: 'SAVE_STORY_TO_DB';
       story: Prisma.StoryCreateInput;
     }
+  | { type: 'SET_THEMES'; themes: string[] }
 
   // State changes
   | { type: 'STORY_SAVE_STARTED' }
@@ -105,13 +111,14 @@ export function storyReducer(
   action: StoryAction,
   exec: EffectReducerExec<StoryState, StoryAction, any>
 ): StoryState {
-  console.log({ action });
+  console.log(action.type, action);
   switch (action.type) {
     case 'STORY_GENERATION_STARTED':
       return {
+        // Reset any previous story content.
         ...state,
+        ...defaultStoryContext,
         storyContentIsLoading: true,
-        storyGenerationComplete: false,
       };
 
     case 'STORY_GENERATION_PROGRESS': {
@@ -150,7 +157,6 @@ export function storyReducer(
       );
       const { imageGenResponse } = state;
 
-      console.log(`story generation complete, saving story`);
       exec({
         type: 'saveStoryToDB',
         completionJson,
@@ -163,7 +169,6 @@ export function storyReducer(
         completion: action.completion,
         completionJson,
         storyContentIsLoading: false,
-        storyGenerationComplete: true,
         storyBody,
         storyTitle,
       };
@@ -191,6 +196,12 @@ export function storyReducer(
         ...state,
         imageIsGenerating: false,
         imageGenerationError: action.error,
+      };
+
+    case 'SET_THEMES':
+      return {
+        ...state,
+        themes: action.themes,
       };
 
     default:

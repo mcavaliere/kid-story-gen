@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 
 import { createContext, useContext, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { useEffectReducer } from 'use-effect-reducer';
 
 import * as z from 'zod';
@@ -19,7 +19,6 @@ import {
 } from '@/context/storyReducer';
 import { createStory } from '@/lib/client/api';
 import { useCompletion } from 'ai/react';
-import { useState } from 'react';
 import { StoryFormSchemaType, storyFormSchema } from '../lib/storyFormSchema';
 import { storyEffects } from './storyEffects';
 
@@ -48,13 +47,13 @@ export function StoryContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [state, dispatch] = useEffectReducer(
-    storyReducer,
-    defaultStoryContext,
-    storyEffects
-  );
-
-  const [storySaved, setStorySaved] = useState<boolean>(false);
+  async function onSubmit(values: StoryFormSchemaType) {
+    console.log(`onSubmit: `, values);
+    // Reset this so we can generate a new image.
+    // setImageGenResponse(undefined);
+    dispatch({ type: 'STORY_GENERATION_STARTED' });
+    await complete(JSON.stringify(form.getValues()));
+  }
 
   const {
     completion,
@@ -67,11 +66,10 @@ export function StoryContextProvider({
     },
   });
 
-  useEffect(() => {
-    if (completion) {
-      dispatch({ type: 'STORY_GENERATION_PROGRESS', completion });
-    }
-  }, [completion]);
+  // For saving the story when generation is complete.
+  const { mutateAsync: mutateCreateStory } = useMutation({
+    mutationFn: createStory,
+  });
 
   const form = useForm<z.infer<typeof storyFormSchema>>({
     resolver: zodResolver(storyFormSchema),
@@ -84,66 +82,44 @@ export function StoryContextProvider({
   });
 
   // Derive list of topics from the selected age group.
-  const currentAgeGroup = form.watch('ageGroup');
-  const themes = AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes;
+  const currentAgeGroup = useWatch({
+    control: form.control,
+    name: 'ageGroup',
+  });
 
-  async function onSubmit(values: StoryFormSchemaType) {
-    // Reset this so we can generate a new image.
-    // setImageGenResponse(undefined);
-    dispatch({ type: 'STORY_GENERATION_STARTED' });
-    await complete(JSON.stringify(form.getValues()));
-  }
+  useEffect(() => {
+    if (currentAgeGroup) {
+      const themes =
+        AGE_GROUPS.find((ag) => ag.name === currentAgeGroup)?.themes || [];
 
-  // For saving the story when generation is complete.
-  const { isPending: isCreatingStory, mutateAsync: mutateCreateStory } =
-    useMutation({
-      mutationFn: createStory,
-    });
+      dispatch({ type: 'SET_THEMES', themes });
+    }
+  }, [currentAgeGroup]);
 
-  // useEffect(() => {
-  //   if (
-  //     storyGenerationComplete &&
-  //     !storyContentIsLoading &&
-  //     imageGenResponse &&
-  //     !imageIsGenerating &&
-  //     !isCreatingStory &&
-  //     !storySaved
-  //   ) {
-  //     console.log(`story generation complete, saving story`);
-  //     mutateCreateStory({
-  //       ...completionJson,
-  //       imageUrl: imageGenResponse.url,
-  //     }).then(() => {
-  //       setStorySaved(true);
-  //     });
-  //   }
-  // }, [
-  //   completionJson,
-  //   imageGenResponse,
-  //   imageIsGenerating,
-  //   isCreatingStory,
-  //   mutateCreateStory,
-  //   storyContentIsLoading,
-  //   storyGenerationComplete,
-  //   storySaved,
-  // ]);
+  const [state, dispatch] = useEffectReducer(
+    storyReducer,
+    {
+      ...defaultStoryContext,
+      form,
+      mutateCreateStory,
+      storyContentIsLoading,
+      onSubmit,
+    },
+    storyEffects
+  );
+
+  useEffect(() => {
+    if (completion) {
+      dispatch({ type: 'STORY_GENERATION_PROGRESS', completion });
+    }
+  }, [completion]);
+
+  console.log(`form.errors`, form.formState.errors);
 
   return (
     <StoryContext.Provider
       value={{
         ...state,
-        // completion,
-        // completionJson,
-        form,
-        // imagePath,
-        // imageGenResponse,
-        // imageIsGenerating,
-        mutateCreateStory,
-        storyContentIsLoading,
-        // storyBody,
-        // storyTitle,
-        onSubmit,
-        themes,
       }}
     >
       <StoryDispatchContext.Provider value={dispatch}>
