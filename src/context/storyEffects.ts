@@ -20,6 +20,34 @@ export const generateImage: StoryEffectFunction = (state, effect, dispatch) => {
     });
 };
 
+export const saveStoryToDB: StoryEffectFunction = (state, effect, dispatch) => {
+  const { mutateCreateStory } = state;
+  const { completionJson, imageGenResponse } = effect;
+  console.log(
+    `saveStoryToDB: `,
+    { mutateCreateStory },
+    { completionJson, imageGenResponse }
+  );
+
+  if (!mutateCreateStory) {
+    console.warn(`mutateCreateStory not defined, returning. `);
+    return;
+  }
+
+  dispatch({ type: 'STORY_SAVE_STARTED' });
+  mutateCreateStory({
+    ...completionJson,
+    imageUrl: imageGenResponse.url,
+  })
+    .then((story: any) => {
+      dispatch({ type: 'STORY_SAVE_COMPLETE', story });
+    })
+    .catch((error: any) => {
+      dispatch({ type: 'STORY_SAVE_ERROR', error });
+    });
+};
+
 export const storyEffects = {
   generateImage,
+  saveStoryToDB,
 };

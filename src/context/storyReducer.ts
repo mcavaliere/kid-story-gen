@@ -1,6 +1,8 @@
 import { CreateImageResponse } from '@/app/actions';
 import { parseCompletion } from '@/lib/parseCompletion';
 import { StoryFormSchemaType, storyFormSchema } from '@/lib/storyFormSchema';
+import { Prisma } from '@prisma/client';
+import { UseMutateAsyncFunction } from '@tanstack/react-query';
 import { UseFormReturn } from 'react-hook-form';
 import { EffectReducerExec } from 'use-effect-reducer';
 import * as z from 'zod';
@@ -20,6 +22,12 @@ export type StoryContextType = {
   storyContentIsLoading: boolean;
   storyGenerationComplete: boolean;
   onSubmit: (values: StoryFormSchemaType) => Promise<void>;
+  mutateCreateStory?: UseMutateAsyncFunction<
+    any,
+    Error,
+    Prisma.StoryCreateInput,
+    unknown
+  >;
   themes?: string[];
 };
 
@@ -45,8 +53,15 @@ export type StoryAction =
       characterDescriptions: string;
       setting: string;
     }
+  | {
+      type: 'SAVE_STORY_TO_DB';
+      story: Prisma.StoryCreateInput;
+    }
 
   // State changes
+  | { type: 'STORY_SAVE_STARTED' }
+  | { type: 'STORY_SAVE_COMPLETE'; story: Prisma.StoryCreateInput }
+  | { type: 'STORY_SAVE_ERROR'; error: any }
   | { type: 'STORY_GENERATION_COMPLETE'; completion: string }
   | { type: 'STORY_GENERATION_STARTED' }
   | { type: 'STORY_GENERATION_PROGRESS'; completion: string }
@@ -90,6 +105,7 @@ export function storyReducer(
   action: StoryAction,
   exec: EffectReducerExec<StoryState, StoryAction, any>
 ): StoryState {
+  console.log({ action });
   switch (action.type) {
     case 'STORY_GENERATION_STARTED':
       return {
@@ -107,14 +123,6 @@ export function storyReducer(
         setting,
         characterDescriptions,
       } = extractStoryContent(state, action);
-
-      // console.log(
-      //   { completionJson },
-      //   { setting },
-      //   { characterDescriptions },
-      //   { imageGenResponse },
-      //   { imageIsGenerating }
-      // );
 
       if (
         completionJson &&
@@ -140,6 +148,15 @@ export function storyReducer(
         state,
         action
       );
+      const { imageGenResponse } = state;
+
+      console.log(`story generation complete, saving story`);
+      exec({
+        type: 'saveStoryToDB',
+        completionJson,
+        imageGenResponse,
+      });
+
       return {
         ...state,
         previousCompletion: state.completion,

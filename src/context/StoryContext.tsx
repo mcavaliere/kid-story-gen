@@ -138,6 +138,7 @@ export function StoryContextProvider({
         // imagePath,
         // imageGenResponse,
         // imageIsGenerating,
+        mutateCreateStory,
         storyContentIsLoading,
         // storyBody,
         // storyTitle,
