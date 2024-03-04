@@ -17,7 +17,13 @@ export type CreateImageParams = {
   setting?: string;
 };
 
-export async function createImage(params: CreateImageParams): Promise<any> {
+export type CreateImageResponse = {
+  url: string;
+};
+
+export async function createImage(
+  params: CreateImageParams
+): Promise<CreateImageResponse> {
   const prompt = replaceTemplateVars(promptTemplate, params);
 
   try {

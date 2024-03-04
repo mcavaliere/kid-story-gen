@@ -18,7 +18,6 @@ export async function POST(req: Request) {
   const promptParams = JSON.parse(input.prompt);
   const storyPrompt = replaceTemplateVars(CREATE_STORY_PROMPT, promptParams);
 
-  console.log({ storyPrompt });
 
   const response = await openai.beta.chat.completions
     .stream({
