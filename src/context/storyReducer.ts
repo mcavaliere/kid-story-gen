@@ -40,7 +40,10 @@ export const defaultStoryContext: StoryContextType = {
   imageGenResponse: undefined,
   imageIsGenerating: false,
   imagePath: undefined,
-  onSubmit: async (values) => Promise.resolve(void 0),
+  onSubmit: async (values) => {
+    console.log(`----------------  🚨DEFAULT ONSUBMIT 🚨  `);
+    return Promise.resolve(void 0);
+  },
   previousCompletion: undefined,
   setting: undefined,
   storyBody: [],
@@ -117,7 +120,17 @@ export function storyReducer(
       return {
         // Reset any previous story content.
         ...state,
-        ...defaultStoryContext,
+        characterDescriptions: undefined,
+        completion: undefined,
+        completionJson: undefined,
+        imageGenerationError: undefined,
+        imageGenResponse: undefined,
+        imageIsGenerating: false,
+        imagePath: undefined,
+        previousCompletion: undefined,
+        setting: undefined,
+        storyBody: [],
+        storyTitle: '',
         storyContentIsLoading: true,
       };
 
