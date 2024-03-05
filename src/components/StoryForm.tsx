@@ -1,4 +1,3 @@
-import Spinner from '@/components/svgs/Spinner';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -124,10 +123,6 @@ export function StoryForm({ form }: StoryFormProps) {
           >
             Make the story!
           </Button>
-
-          {storyContentIsLoading ? (
-            <Spinner className="inline-block ml-2 text-black" />
-          ) : null}
         </div>
 
         {/* <div className="flex flex-col w-full justify-center items-center mt-4">

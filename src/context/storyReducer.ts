@@ -41,7 +41,6 @@ export const defaultStoryContext: StoryContextType = {
   imageIsGenerating: false,
   imagePath: undefined,
   onSubmit: async (values) => {
-    console.log(`----------------  🚨DEFAULT ONSUBMIT 🚨  `);
     return Promise.resolve(void 0);
   },
   previousCompletion: undefined,
@@ -188,14 +187,12 @@ export function storyReducer(
     }
 
     case 'IMAGE_GENERATION_STARTED':
-      console.log(`IMAGE_GENERATION_STARTED`);
       return {
         ...state,
         imageIsGenerating: true,
       };
 
     case 'IMAGE_GENERATION_COMPLETE':
-      console.log(`IMAGE_GENERATION_COMPLETe:`, action.response);
       return {
         ...state,
         imageIsGenerating: false,
